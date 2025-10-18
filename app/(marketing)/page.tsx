@@ -1,14 +1,19 @@
+import Navigation from '@/components/landing/Navigation';
+import Hero from '@/components/landing/Hero';
+import Features from '@/components/landing/Features';
+import Screenshots from '@/components/landing/Screenshots';
+import AppDownload from '@/components/landing/AppDownload';
+import Footer from '@/components/landing/Footer';
+
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      <div className="container mx-auto px-6 py-20">
-        <h1 className="text-4xl md:text-6xl font-bold font-poppins gradient-text text-center mb-6">
-          FitCheck AI ✨
-        </h1>
-        <p className="text-xl text-center text-gray-600 max-w-2xl mx-auto">
-          Your AI Fashion Assistant is coming soon!
-        </p>
-      </div>
+      <Navigation />
+      <Hero />
+      <Features />
+      <Screenshots />
+      <AppDownload />
+      <Footer />
     </main>
   );
 }
