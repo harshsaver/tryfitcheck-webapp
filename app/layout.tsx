@@ -69,12 +69,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <head>
-        {/* DataFast Analytics - Add your website ID */}
-        {/* <script
+        {/* DataFast Analytics */}
+        <script
           defer
-          data-website-id="YOUR_DATAFAST_WEBSITE_ID"
-          src="https://datafast.io/script.js"
-        ></script> */}
+          data-website-id="dfid_8dDTTY4SDh54x43CILUSu"
+          data-domain="tryfitcheck.com"
+          src="https://datafa.st/js/script.js"
+        ></script>
       </head>
       <body className="font-inter antialiased">
         {children}
