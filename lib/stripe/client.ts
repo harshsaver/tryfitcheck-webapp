@@ -3,7 +3,7 @@ import { stripeConfig } from './config';
 
 // Server-side Stripe client (never expose on client!)
 export const stripe = new Stripe(stripeConfig.secretKey, {
-  apiVersion: '2025-01-27.acacia',
+  apiVersion: '2024-06-20',
   typescript: true,
 });
 
