@@ -3,9 +3,8 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function VirtualTryOnPreview() {
   const ref = useRef(null);
@@ -14,10 +13,10 @@ export default function VirtualTryOnPreview() {
 
   const features = {
     web: [
-      'Pay per try-on ($0.50 each)',
+      'Pay per try-on (from $0.50)',
       'No signup required',
       'Instant access',
-      'Perfect for one-time use',
+      'Perfect for quick decisions',
       'High-quality AI results',
       'Download & share results',
     ],
@@ -25,38 +24,53 @@ export default function VirtualTryOnPreview() {
       'Unlimited try-ons',
       'Outfit analysis & ratings',
       'Smart wardrobe organizer',
-      'Style recommendations',
+      'Personalized style tips',
       'Save favorite looks',
       '100% FREE forever',
     ],
   };
 
   return (
-    <section className="py-20 md:py-32 bg-white relative overflow-hidden">
+    <section className="py-24 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+      {/* Minimal background */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
+        backgroundSize: '40px 40px'
+      }} />
+
       <div className="container mx-auto px-6 relative z-10" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.7 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins gradient-text mb-4">
-            Choose Your Experience
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold tracking-wider text-gray-500 uppercase">Choose Your Path</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins mb-6">
+            <span className="text-gray-900">Web or App?</span>{' '}
+            <span className="gradient-text">You Decide</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Try it on the web now or download our app for unlimited access
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Quick try-on on the web or unlimited features in our free app
           </p>
         </motion.div>
 
-        <div className="max-w-5xl mx-auto">
-          {/* Tab Selector */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex p-2 bg-gray-100 rounded-full">
+        <div className="max-w-4xl mx-auto">
+          {/* Tab Selector - Premium Minimal */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="flex justify-center mb-16"
+          >
+            <div className="inline-flex p-1.5 bg-white border-2 border-gray-200 rounded-full shadow-lg">
               <button
                 onClick={() => setActiveTab('web')}
-                className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`px-10 py-4 rounded-full font-semibold transition-all duration-300 ${
                   activeTab === 'web'
-                    ? 'bg-gradient-to-r from-primary-pink to-secondary-purple text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-primary-pink to-secondary-purple text-white shadow-xl'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -64,153 +78,124 @@ export default function VirtualTryOnPreview() {
               </button>
               <button
                 onClick={() => setActiveTab('app')}
-                className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`px-10 py-4 rounded-full font-semibold transition-all duration-300 ${
                   activeTab === 'app'
-                    ? 'bg-gradient-to-r from-primary-pink to-secondary-purple text-white shadow-lg'
+                    ? 'bg-gradient-to-r from-primary-pink to-secondary-purple text-white shadow-xl'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 Mobile App
               </button>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Content */}
+          {/* Content Area */}
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
+            className="border-2 border-gray-200 rounded-3xl p-12 bg-white shadow-xl"
           >
-            {/* Left Side - Features */}
-            <div>
-              <h3 className="text-3xl font-bold font-poppins mb-6 text-gray-900">
-                {activeTab === 'web' ? 'Try It Right Now' : 'Get the Full Experience'}
-              </h3>
-              <p className="text-lg text-gray-600 mb-8">
-                {activeTab === 'web'
-                  ? 'Perfect for trying a quick outfit before you buy. No commitment needed.'
-                  : 'Download our app for unlimited virtual try-ons plus powerful wardrobe tools.'}
-              </p>
-
-              <ul className="space-y-4 mb-8">
-                {features[activeTab].map((feature, index) => (
-                  <motion.li
-                    key={feature}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-700 font-medium">{feature}</span>
-                  </motion.li>
-                ))}
-              </ul>
-
-              {activeTab === 'web' ? (
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-primary-pink/50 transition-all duration-300 hover:scale-105"
-                >
-                  <span>Start Virtual Try-On</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              ) : (
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <a
-                    href={process.env.NEXT_PUBLIC_IOS_APP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transform hover:scale-105 transition-transform"
-                  >
-                    <Image
-                      src="/images/app-store-badges/appstore.png"
-                      alt="Download on App Store"
-                      width={200}
-                      height={60}
-                      className="h-14 w-auto"
-                    />
-                  </a>
-                  <a
-                    href={process.env.NEXT_PUBLIC_ANDROID_APP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transform hover:scale-105 transition-transform"
-                  >
-                    <Image
-                      src="/images/app-store-badges/play.png"
-                      alt="Get it on Google Play"
-                      width={200}
-                      height={60}
-                      className="h-14 w-auto"
-                    />
-                  </a>
-                </div>
-              )}
-            </div>
-
-            {/* Right Side - Visual Representation */}
-            <div className="relative">
-              <div className="relative bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl p-8 shadow-2xl">
-                {activeTab === 'web' ? (
-                  <div className="space-y-6">
-                    <div className="bg-white rounded-2xl p-6 shadow-lg">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-2xl font-bold text-gray-900">$0.50</span>
-                        <span className="text-sm text-gray-500">per try-on</span>
-                      </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full w-1/3 bg-gradient-to-r from-primary-pink to-secondary-purple rounded-full" />
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2">Quick & Easy</p>
-                    </div>
-
-                    <div className="bg-white rounded-2xl p-6 shadow-lg">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-lg flex items-center justify-center text-white font-bold">
-                          1
-                        </div>
-                        <span className="font-semibold">Upload Photo</span>
-                      </div>
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-bold">
-                          2
-                        </div>
-                        <span className="font-semibold">Pick Outfit</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center text-white font-bold">
-                          3
-                        </div>
-                        <span className="font-semibold">Get Result ✨</span>
-                      </div>
-                    </div>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left - Features */}
+              <div>
+                <div className="mb-8">
+                  <div className="inline-block px-4 py-2 bg-gradient-to-r from-pink-50 to-purple-50 rounded-full text-sm font-semibold text-primary-pink border border-primary-pink/20 mb-6">
+                    {activeTab === 'web' ? '✨ Instant Access' : '🎉 Unlimited Free'}
                   </div>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="bg-white rounded-2xl p-6 shadow-lg text-center">
-                      <div className="text-4xl font-bold gradient-text mb-2">FREE</div>
-                      <p className="text-gray-600">Unlimited Everything</p>
-                    </div>
+                  <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
+                    {activeTab === 'web' ? 'Try It Right Now' : 'Download the App'}
+                  </h3>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                    {activeTab === 'web'
+                      ? 'Perfect for trying an outfit before you buy. No commitment needed.'
+                      : 'Get the complete FitCheck experience with unlimited everything.'}
+                  </p>
+                </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      {['Virtual Try-On', 'Outfit Rating', 'Wardrobe AI', 'Style Tips'].map((feature) => (
-                        <div key={feature} className="bg-white rounded-xl p-4 shadow-lg text-center">
-                          <div className="text-2xl mb-2">✨</div>
-                          <p className="text-sm font-semibold text-gray-700">{feature}</p>
-                        </div>
-                      ))}
-                    </div>
+                {/* Features List */}
+                <div className="space-y-4 mb-8">
+                  {features[activeTab].map((feature, index) => (
+                    <motion.div
+                      key={feature}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                      </div>
+                      <span className="text-gray-700 text-lg">{feature}</span>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* CTA */}
+                {activeTab === 'web' ? (
+                  <Link
+                    href="/pricing"
+                    className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
+                  >
+                    <span>Start Try-On</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                ) : (
+                  <div className="space-y-4">
+                    <a
+                      href={process.env.NEXT_PUBLIC_IOS_APP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 px-10 py-5 bg-black text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    >
+                      <span>Download on App Store</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </a>
+                    <br />
+                    <a
+                      href={process.env.NEXT_PUBLIC_ANDROID_APP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 px-10 py-5 bg-black text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    >
+                      <span>Get it on Google Play</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </a>
                   </div>
                 )}
+              </div>
 
-                {/* Floating badge */}
-                <div className="absolute -top-4 -right-4 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full shadow-xl font-bold text-sm">
-                  {activeTab === 'web' ? 'Instant Access' : 'Most Popular'}
+              {/* Right - Visual */}
+              <div className="relative">
+                <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-2xl">
+                  {activeTab === 'web' ? (
+                    <div className="text-center p-8">
+                      <div className="text-8xl mb-4">💳</div>
+                      <p className="text-gray-700 font-semibold text-lg">Web Virtual Try-On</p>
+                      <p className="text-gray-600 mt-2">From $0.50 per try-on</p>
+                    </div>
+                  ) : (
+                    <div className="text-center p-8">
+                      <div className="text-8xl mb-4">📱</div>
+                      <p className="text-gray-700 font-semibold text-lg">Mobile App</p>
+                      <p className="text-gray-600 mt-2">Unlimited & FREE</p>
+                    </div>
+                  )}
+
+                  {/* Floating badge */}
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="absolute top-4 right-4 px-4 py-2 bg-white rounded-full shadow-xl border-2 border-primary-pink"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary-pink" />
+                      <span className="text-sm font-bold text-gray-700">
+                        {activeTab === 'web' ? 'Instant' : 'Unlimited'}
+                      </span>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
             </div>

@@ -4,49 +4,44 @@ import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Zap, Shield, Smartphone, Camera, Download, Heart, Sparkles, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 const features = [
   {
-    icon: Zap,
-    title: 'Lightning Fast Results',
-    description: 'Get your AI-powered virtual try-on in just 5-10 seconds. No waiting, no hassle – instant gratification.',
-    gradient: 'from-yellow-500 to-orange-500',
-    bgColor: 'bg-yellow-50',
-  },
-  {
     icon: Camera,
     title: 'Hyper-Realistic AI',
-    description: 'Powered by cutting-edge AI technology that creates photorealistic try-ons. See exactly how clothes will look on your body.',
+    description: 'Cutting-edge technology creates photorealistic visualizations. See exactly how clothes will look on your body.',
     gradient: 'from-purple-500 to-pink-500',
-    bgColor: 'bg-purple-50',
+  },
+  {
+    icon: Zap,
+    title: 'Lightning Fast',
+    description: 'Get your AI-powered virtual try-on in just 5-10 seconds. No waiting, instant results.',
+    gradient: 'from-yellow-500 to-orange-500',
   },
   {
     icon: Shield,
-    title: '100% Privacy Guaranteed',
-    description: 'Your photos are processed securely and deleted after 24 hours. We never share or store your images permanently.',
+    title: 'Privacy First',
+    description: 'Your photos are processed securely and deleted after 24 hours. We never share your images.',
     gradient: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
   },
   {
     icon: Smartphone,
-    title: 'Works Anywhere',
-    description: 'Use on any device – phone, tablet, or computer. No app download required for quick try-ons.',
+    title: 'Any Device',
+    description: 'Works seamlessly on phone, tablet, or computer. No app download required.',
     gradient: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50',
   },
   {
     icon: Download,
     title: 'Download & Share',
-    description: 'Save your try-on results to your device or share them with friends to get their opinion before buying.',
+    description: 'Save your try-on results or share them with friends to get opinions before buying.',
     gradient: 'from-pink-500 to-rose-500',
-    bgColor: 'bg-pink-50',
   },
   {
     icon: Heart,
-    title: 'Shop with Confidence',
-    description: 'Make smarter shopping decisions. Reduce returns and only buy clothes you know will look great on you.',
+    title: 'Shop Confidently',
+    description: 'Make smarter decisions. Reduce returns and only buy what looks great on you.',
     gradient: 'from-red-500 to-pink-500',
-    bgColor: 'bg-red-50',
   },
 ];
 
@@ -62,45 +57,52 @@ export default function Features() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute top-40 left-20 w-72 h-72 bg-primary-pink/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-40 right-20 w-96 h-96 bg-secondary-purple/20 rounded-full blur-3xl" />
-      </div>
+    <section id="features" className="py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+      {/* Minimal background */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
+        backgroundSize: '40px 40px'
+      }} />
 
       <div className="container mx-auto px-6 relative z-10" ref={ref}>
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.7 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins gradient-text mb-4">
-            Why Choose FitCheck?
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold tracking-wider text-gray-500 uppercase">Features</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins mb-6">
+            <span className="text-gray-900">Why Choose</span>{' '}
+            <span className="gradient-text">FitCheck?</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            The fastest, most accurate, and secure way to try on clothes virtually
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            The most advanced, secure, and intuitive virtual try-on experience
           </p>
         </motion.div>
 
-        {/* Stats Section */}
+        {/* Stats - Premium Minimal Design */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 max-w-5xl mx-auto"
         >
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: index * 0.1 }}
-              className="text-center p-6 bg-white rounded-2xl shadow-lg border-2 border-gray-100 hover:border-primary-pink transition-all duration-300"
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              className="text-center"
             >
-              <stat.icon className="w-8 h-8 text-primary-pink mx-auto mb-3" />
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-1">
+              <div className="mb-4 flex justify-center">
+                <stat.icon className="w-8 h-8 text-primary-pink" strokeWidth={1.5} />
+              </div>
+              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2 font-poppins">
                 {stat.value}
               </div>
               <div className="text-sm text-gray-600 font-medium">
@@ -110,20 +112,22 @@ export default function Features() {
           ))}
         </motion.div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Features Grid - Clean Luxury Layout */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 50 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
+              transition={{ duration: 0.7, delay: index * 0.1 }}
               className="group"
             >
-              <div className="relative bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-gray-100 hover:border-primary-pink h-full">
+              <div className="h-full">
                 {/* Icon */}
-                <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <feature.icon className="w-8 h-8 text-white" />
+                <div className="mb-6">
+                  <div className={`inline-flex w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="w-7 h-7 text-white" strokeWidth={2} />
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -132,40 +136,40 @@ export default function Features() {
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed text-lg">
                   {feature.description}
                 </p>
 
-                {/* Background gradient on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 rounded-3xl transition-opacity duration-300 pointer-events-none`} />
+                {/* Subtle underline on hover */}
+                <div className={`mt-6 h-1 w-0 group-hover:w-16 bg-gradient-to-r ${feature.gradient} transition-all duration-500 rounded-full`} />
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA - Elegant Minimal */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="mt-20 text-center"
+          transition={{ duration: 0.7, delay: 0.8 }}
+          className="mt-24 text-center"
         >
-          <div className="inline-block p-8 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-xl">
-            <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-4 text-gray-900">
-              Ready to see how great you&apos;ll look? ✨
+          <div className="inline-block border-2 border-gray-200 rounded-3xl p-12 max-w-3xl">
+            <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
+              Ready to see how great you&apos;ll look?
             </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of fashion-forward shoppers who use FitCheck to make confident purchase decisions.
+            <p className="text-gray-600 mb-8 text-lg max-w-xl mx-auto leading-relaxed">
+              Join thousands of fashion-forward shoppers making confident purchase decisions with FitCheck.
             </p>
-            <a
+            <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-primary-pink/50 transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
             >
-              <span>Try Virtual Try-On Now</span>
+              <span>Try Virtual Try-On</span>
               <Sparkles className="w-5 h-5" />
-            </a>
-            <p className="mt-4 text-sm text-gray-500">
-              Starting at just $0.50 • No commitment required
+            </Link>
+            <p className="mt-6 text-sm text-gray-500">
+              From $0.50 per try-on • No commitment required
             </p>
           </div>
         </motion.div>

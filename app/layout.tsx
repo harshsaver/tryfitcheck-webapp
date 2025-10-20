@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     "virtual fitting room",
     "outfit recommendations"
   ],
+  icons: {
+    icon: '/favicon.png',
+  },
   authors: [{ name: "FitCheck AI" }],
   creator: "FitCheck AI",
   openGraph: {

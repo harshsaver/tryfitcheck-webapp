@@ -3,237 +3,174 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { Smartphone, Zap, Sparkles, CreditCard, Download, ArrowRight } from 'lucide-react';
+import { Zap, Sparkles, ArrowRight, Check } from 'lucide-react';
 
 export default function AppDownload() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="download" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-pink/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary-purple/10 rounded-full blur-3xl" />
-      </div>
+    <section id="download" className="py-24 md:py-32 bg-white relative overflow-hidden">
+      {/* Minimal background */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+      }} />
 
       <div className="container mx-auto px-6 relative z-10" ref={ref}>
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.7 }}
+          className="text-center mb-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins gradient-text mb-4">
-            Choose Your Experience
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold tracking-wider text-gray-500 uppercase">Get Started</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-poppins mb-6">
+            <span className="text-gray-900">Choose Your</span>{' '}
+            <span className="gradient-text">Experience</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Get started with virtual try-on instantly or unlock unlimited features with our free app
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Start instantly on web or get the full experience with our free app
           </p>
         </motion.div>
 
-        {/* Two Options Side by Side */}
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
-          {/* Option 1: Web Try-On (Primary CTA) */}
+        {/* Two Options - Clean Side by Side */}
+        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          {/* Web Try-On - Primary */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative group"
+            transition={{ duration: 0.7, delay: 0.2 }}
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary-pink to-secondary-purple rounded-3xl opacity-50 group-hover:opacity-75 blur-xl transition-opacity duration-300" />
-            <div className="relative bg-white rounded-3xl p-10 shadow-2xl h-full flex flex-col">
+            <div className="border-2 border-primary-pink/50 rounded-3xl p-12 bg-gradient-to-br from-white to-pink-50/30 h-full flex flex-col shadow-xl hover:shadow-2xl transition-shadow duration-500">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white text-sm font-bold rounded-full mb-6 self-start">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white text-sm font-bold rounded-full mb-6 self-start shadow-lg">
                 <Zap className="w-4 h-4" />
                 <span>INSTANT ACCESS</span>
               </div>
 
-              {/* Title */}
+              {/* Title & Price */}
               <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-3 text-gray-900">
-                Try It Right Now
+                Web Try-On
               </h3>
-              <p className="text-lg text-gray-600 mb-6">
-                Perfect for trying a quick outfit before you buy. No commitment needed.
-              </p>
-
-              {/* Pricing */}
-              <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6 mb-6">
-                <div className="flex items-baseline gap-2 mb-2">
+              <div className="mb-6">
+                <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-5xl font-bold gradient-text">$0.50</span>
-                  <span className="text-gray-600">per try-on</span>
+                  <span className="text-gray-600 text-lg">per try-on</span>
                 </div>
-                <p className="text-sm text-gray-600">Pay only for what you use</p>
+                <p className="text-gray-600">Perfect for quick decisions</p>
               </div>
 
               {/* Features */}
-              <ul className="space-y-3 mb-8 flex-grow">
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
+              <div className="space-y-3 mb-10 flex-grow">
+                {[
+                  'No signup required',
+                  'Results in 5-10 seconds',
+                  'High-quality AI',
+                  'Download & share',
+                  'Secure payment',
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-gray-700">{feature}</span>
                   </div>
-                  <span className="text-gray-700 font-medium">No signup or app download required</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">Results in 5-10 seconds</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">Download and share your results</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">Secure payment with Stripe</span>
-                </li>
-              </ul>
+                ))}
+              </div>
 
               {/* CTA */}
               <Link
                 href="/pricing"
-                className="inline-flex items-center justify-center gap-2 px-8 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-primary-pink/50 transition-all duration-300 hover:scale-105"
+                className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
               >
-                <CreditCard className="w-5 h-5" />
-                <span>Start Virtual Try-On</span>
+                <span>Start Try-On</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
           </motion.div>
 
-          {/* Option 2: Mobile App (Secondary CTA) */}
+          {/* Mobile App - Secondary */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="relative group"
+            transition={{ duration: 0.7, delay: 0.4 }}
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl opacity-30 group-hover:opacity-50 blur-xl transition-opacity duration-300" />
-            <div className="relative bg-white rounded-3xl p-10 shadow-2xl border-2 border-gray-100 h-full flex flex-col">
+            <div className="border-2 border-gray-200 rounded-3xl p-12 bg-white h-full flex flex-col shadow-xl hover:shadow-2xl transition-shadow duration-500">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-bold rounded-full mb-6 self-start">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-bold rounded-full mb-6 self-start shadow-lg">
                 <Sparkles className="w-4 h-4" />
                 <span>UNLIMITED FREE</span>
               </div>
 
-              {/* Title */}
+              {/* Title & Price */}
               <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-3 text-gray-900">
-                Download the App
+                Mobile App
               </h3>
-              <p className="text-lg text-gray-600 mb-6">
-                Get the complete FitCheck experience with unlimited try-ons and more.
-              </p>
-
-              {/* Pricing */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 mb-6">
-                <div className="flex items-baseline gap-2 mb-2">
+              <div className="mb-6">
+                <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">FREE</span>
-                  <span className="text-gray-600">forever</span>
+                  <span className="text-gray-600 text-lg">forever</span>
                 </div>
-                <p className="text-sm text-gray-600">Unlimited everything, no credit card needed</p>
+                <p className="text-gray-600">Complete FitCheck experience</p>
               </div>
 
               {/* Features */}
-              <ul className="space-y-3 mb-8 flex-grow">
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
+              <div className="space-y-3 mb-10 flex-grow">
+                {[
+                  'Unlimited try-ons',
+                  'Outfit analysis',
+                  'Wardrobe organizer',
+                  'Style tips',
+                  '100% free',
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-gray-700">{feature}</span>
                   </div>
-                  <span className="text-gray-700 font-medium">Unlimited virtual try-ons</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">AI outfit analysis & ratings</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">Smart wardrobe organizer</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-xs font-bold">✓</span>
-                  </div>
-                  <span className="text-gray-700 font-medium">Personalized style recommendations</span>
-                </li>
-              </ul>
+                ))}
+              </div>
 
-              {/* CTA */}
+              {/* CTAs */}
               <div className="space-y-3">
                 <a
                   href={process.env.NEXT_PUBLIC_IOS_APP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block transform hover:scale-105 transition-transform duration-200"
+                  className="flex items-center justify-center gap-3 px-10 py-5 bg-black text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                 >
-                  <div className="flex items-center justify-center gap-3 px-6 py-4 bg-black text-white rounded-2xl font-semibold hover:bg-gray-900 transition-colors">
-                    <Download className="w-5 h-5" />
-                    <span>Download on App Store</span>
-                  </div>
+                  <span>App Store</span>
+                  <ArrowRight className="w-5 h-5" />
                 </a>
                 <a
                   href={process.env.NEXT_PUBLIC_ANDROID_APP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block transform hover:scale-105 transition-transform duration-200"
+                  className="flex items-center justify-center gap-3 px-10 py-5 bg-black text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                 >
-                  <div className="flex items-center justify-center gap-3 px-6 py-4 bg-black text-white rounded-2xl font-semibold hover:bg-gray-900 transition-colors">
-                    <Download className="w-5 h-5" />
-                    <span>Get it on Google Play</span>
-                  </div>
+                  <span>Google Play</span>
+                  <ArrowRight className="w-5 h-5" />
                 </a>
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Bottom CTA Banner */}
+        {/* Bottom Note */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="max-w-4xl mx-auto"
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="mt-16 text-center"
         >
-          <div className="relative bg-gradient-to-br from-pink-100 via-purple-100 to-cyan-100 rounded-3xl p-8 md:p-12 shadow-xl text-center overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-pink/20 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary-purple/20 rounded-full blur-3xl" />
-
-            <div className="relative z-10">
-              <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-3 text-gray-900">
-                Not sure which option to choose?
-              </h3>
-              <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
-                Start with the web version to try it out, then download the app for unlimited access to all features!
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-lg shadow-xl hover:shadow-primary-pink/50 transition-all duration-300 hover:scale-105"
-                >
-                  <span>Try Web Version</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <a
-                  href="#download"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-700 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-2 border-gray-200"
-                >
-                  <Smartphone className="w-5 h-5" />
-                  <span>Get the App</span>
-                </a>
-              </div>
-            </div>
-          </div>
+          <p className="text-gray-600 text-lg">
+            Not sure which to choose? <Link href="/pricing" className="text-primary-pink font-semibold hover:underline">Try web first</Link>, then download the app for unlimited access
+          </p>
         </motion.div>
       </div>
     </section>
