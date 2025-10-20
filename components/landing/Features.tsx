@@ -152,7 +152,7 @@ export default function Features() {
         >
           <div className="inline-block p-8 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl shadow-xl">
             <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-4 text-gray-900">
-              Ready to see how great you'll look? ✨
+              Ready to see how great you&apos;ll look? ✨
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
               Join thousands of fashion-forward shoppers who use FitCheck to make confident purchase decisions.

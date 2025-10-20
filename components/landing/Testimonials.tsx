@@ -92,7 +92,7 @@ export default function Testimonials() {
 
                 {/* Testimonial Text */}
                 <p className="text-gray-700 leading-relaxed mb-6 italic">
-                  "{testimonial.text}"
+                  &ldquo;{testimonial.text}&rdquo;
                 </p>
 
                 {/* Highlight Badge */}

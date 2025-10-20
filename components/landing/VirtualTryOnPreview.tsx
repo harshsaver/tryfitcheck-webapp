@@ -5,6 +5,7 @@ import { useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function VirtualTryOnPreview() {
   const ref = useRef(null);
@@ -126,10 +127,12 @@ export default function VirtualTryOnPreview() {
                     rel="noopener noreferrer"
                     className="transform hover:scale-105 transition-transform"
                   >
-                    <img
+                    <Image
                       src="/images/app-store-badges/appstore.png"
                       alt="Download on App Store"
-                      className="h-14"
+                      width={200}
+                      height={60}
+                      className="h-14 w-auto"
                     />
                   </a>
                   <a
@@ -138,10 +141,12 @@ export default function VirtualTryOnPreview() {
                     rel="noopener noreferrer"
                     className="transform hover:scale-105 transition-transform"
                   >
-                    <img
+                    <Image
                       src="/images/app-store-badges/play.png"
                       alt="Get it on Google Play"
-                      className="h-14"
+                      width={200}
+                      height={60}
+                      className="h-14 w-auto"
                     />
                   </a>
                 </div>
