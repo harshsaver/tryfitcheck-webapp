@@ -2,6 +2,7 @@ import Navigation from '@/components/landing/Navigation';
 import Hero from '@/components/landing/Hero';
 import HowItWorks from '@/components/landing/HowItWorks';
 import Features from '@/components/landing/Features';
+import SocialProof from '@/components/landing/SocialProof';
 import VirtualTryOnPreview from '@/components/landing/VirtualTryOnPreview';
 import Testimonials from '@/components/landing/Testimonials';
 import Screenshots from '@/components/landing/Screenshots';
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Hero />
       <HowItWorks />
       <Features />
+      <SocialProof />
       <VirtualTryOnPreview />
       <Testimonials />
       <Screenshots />
