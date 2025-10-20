@@ -92,7 +92,7 @@ export default function Hero() {
 
             {/* App Download Alternative */}
             <div className="inline-flex flex-wrap items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
-              <span className="text-sm text-gray-600 font-medium">Or get unlimited try-ons:</span>
+              <span className="text-sm text-gray-600 font-medium">Or get the full app with 3 powerful features:</span>
               <a
                 href={process.env.NEXT_PUBLIC_IOS_APP_URL}
                 target="_blank"

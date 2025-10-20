@@ -16,17 +16,17 @@ export default function VirtualTryOnPreview() {
       'Pay per try-on (from $0.50)',
       'No signup required',
       'Instant access',
-      'Perfect for quick decisions',
+      'Virtual try-on only',
       'High-quality AI results',
       'Download & share results',
     ],
     app: [
-      'Unlimited try-ons',
-      'Outfit analysis & ratings',
+      'AI outfit analysis & ratings',
       'Smart wardrobe organizer',
-      'Personalized style tips',
-      'Save favorite looks',
-      '100% FREE forever',
+      'Unlimited virtual try-ons',
+      'Personalized style recommendations',
+      'Mix & match from your closet',
+      'Premium subscription',
     ],
   };
 
@@ -53,7 +53,7 @@ export default function VirtualTryOnPreview() {
             <span className="gradient-text">You Decide</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Quick try-on on the web or unlimited features in our free app
+            Quick try-on on the web or full AI assistant in our premium app
           </p>
         </motion.div>
 
@@ -102,7 +102,7 @@ export default function VirtualTryOnPreview() {
               <div>
                 <div className="mb-8">
                   <div className="inline-block px-4 py-2 bg-gradient-to-r from-pink-50 to-purple-50 rounded-full text-sm font-semibold text-primary-pink border border-primary-pink/20 mb-6">
-                    {activeTab === 'web' ? '✨ Instant Access' : '🎉 Unlimited Free'}
+                    {activeTab === 'web' ? '✨ Instant Access' : '🎯 3 Powerful Features'}
                   </div>
                   <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
                     {activeTab === 'web' ? 'Try It Right Now' : 'Download the App'}
@@ -110,7 +110,7 @@ export default function VirtualTryOnPreview() {
                   <p className="text-gray-600 text-lg leading-relaxed mb-8">
                     {activeTab === 'web'
                       ? 'Perfect for trying an outfit before you buy. No commitment needed.'
-                      : 'Get the complete FitCheck experience with unlimited everything.'}
+                      : 'Complete AI fashion assistant with outfit analysis, wardrobe organization & unlimited try-ons.'}
                   </p>
                 </div>
 
@@ -178,8 +178,8 @@ export default function VirtualTryOnPreview() {
                   ) : (
                     <div className="text-center p-8">
                       <div className="text-8xl mb-4">📱</div>
-                      <p className="text-gray-700 font-semibold text-lg">Mobile App</p>
-                      <p className="text-gray-600 mt-2">Unlimited & FREE</p>
+                      <p className="text-gray-700 font-semibold text-lg">FitCheck Premium</p>
+                      <p className="text-gray-600 mt-2">3 Powerful Features</p>
                     </div>
                   )}
 

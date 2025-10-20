@@ -33,7 +33,7 @@ export default function AppDownload() {
             <span className="gradient-text">Experience</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Start instantly on web or get the full experience with our free app
+            Start instantly on web or get the full experience with our premium app
           </p>
         </motion.div>
 
@@ -101,34 +101,34 @@ export default function AppDownload() {
           >
             <div className="border-2 border-gray-200 rounded-3xl p-12 bg-white h-full flex flex-col shadow-xl hover:shadow-2xl transition-shadow duration-500">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-sm font-bold rounded-full mb-6 self-start shadow-lg">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold rounded-full mb-6 self-start shadow-lg">
                 <Sparkles className="w-4 h-4" />
-                <span>UNLIMITED FREE</span>
+                <span>3 POWERFUL FEATURES</span>
               </div>
 
               {/* Title & Price */}
               <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-3 text-gray-900">
-                Mobile App
+                FitCheck Premium
               </h3>
               <div className="mb-6">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">FREE</span>
-                  <span className="text-gray-600 text-lg">forever</span>
+                  <span className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Premium</span>
+                  <span className="text-gray-600 text-lg">subscription</span>
                 </div>
-                <p className="text-gray-600">Complete FitCheck experience</p>
+                <p className="text-gray-600">Complete AI fashion assistant</p>
               </div>
 
               {/* Features */}
               <div className="space-y-3 mb-10 flex-grow">
                 {[
-                  'Unlimited try-ons',
-                  'Outfit analysis',
-                  'Wardrobe organizer',
-                  'Style tips',
-                  '100% free',
+                  'AI outfit analysis & ratings',
+                  'Smart wardrobe organizer',
+                  'Unlimited virtual try-ons',
+                  'Personalized style tips',
+                  'Mix & match from closet',
                 ].map((feature) => (
                   <div key={feature} className="flex items-center gap-3">
-                    <div className="w-5 h-5 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-5 h-5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
                       <Check className="w-3 h-3 text-white" strokeWidth={3} />
                     </div>
                     <span className="text-gray-700">{feature}</span>
@@ -169,7 +169,7 @@ export default function AppDownload() {
           className="mt-16 text-center"
         >
           <p className="text-gray-600 text-lg">
-            Not sure which to choose? <Link href="/pricing" className="text-primary-pink font-semibold hover:underline">Try web first</Link>, then download the app for unlimited access
+            Not sure which to choose? <Link href="/pricing" className="text-primary-pink font-semibold hover:underline">Try web first</Link>, then download the app for the complete experience
           </p>
         </motion.div>
       </div>
