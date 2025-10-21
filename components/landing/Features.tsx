@@ -104,45 +104,55 @@ export default function Features() {
           ))}
         </motion.div>
 
-        {/* Features - Visual Examples */}
-        <div className="space-y-16 max-w-6xl mx-auto mb-20">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: index * 0.15 }}
-              className={`grid md:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
-            >
-              {/* Visual/Image Placeholder */}
-              <div className={`${index % 2 === 1 ? 'md:order-2' : ''}`}>
-                <div className={`relative aspect-square bg-gradient-to-br ${feature.gradient} opacity-10 rounded-3xl border-2 border-gray-200 flex items-center justify-center overflow-hidden`}>
-                  <div className="text-9xl">{feature.visual}</div>
-                  <div className="absolute bottom-6 left-6 right-6 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl">
-                    <p className="text-sm font-semibold text-gray-700">
-                      {feature.example}
-                    </p>
+        {/* Features - Horizontal Scrolling Cards */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="relative mb-20"
+        >
+          {/* Gradient Fades on Edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none hidden md:block" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none hidden md:block" />
+
+          {/* Scrollable Container */}
+          <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory px-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, x: 50 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="flex-shrink-0 w-80 md:w-96 snap-center"
+              >
+                <div className="border-2 border-gray-200 rounded-3xl p-8 bg-white hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
+                  {/* Visual/Image Placeholder */}
+                  <div className={`relative aspect-square bg-gradient-to-br ${feature.gradient} opacity-10 rounded-2xl border-2 border-gray-200 flex items-center justify-center overflow-hidden mb-6`}>
+                    <div className="text-7xl">{feature.visual}</div>
+                    <div className="absolute bottom-4 left-4 right-4 px-4 py-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg">
+                      <p className="text-xs font-semibold text-gray-700">
+                        {feature.example}
+                      </p>
+                    </div>
                   </div>
+
+                  {/* Icon */}
+                  <div className={`inline-block w-10 h-10 bg-gradient-to-br ${feature.gradient} rounded-lg mb-4 shadow-lg`} />
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold font-poppins mb-3 text-gray-900">
+                    {feature.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    {feature.description}
+                  </p>
                 </div>
-              </div>
-
-              {/* Content */}
-              <div className={`${index % 2 === 1 ? 'md:order-1' : ''}`}>
-                <div className={`inline-block w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl mb-6 shadow-lg`} />
-
-                <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
-                  {feature.title}
-                </h3>
-
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
-                  {feature.description}
-                </p>
-
-                <div className={`h-1 w-20 bg-gradient-to-r ${feature.gradient} rounded-full`} />
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Bottom CTA */}
         <motion.div
