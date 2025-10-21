@@ -108,21 +108,23 @@ export default function SocialProof() {
     if (!scrollContainer) return;
 
     let isPaused = false;
+    let animationFrame: number;
 
-    const scrollInterval = setInterval(() => {
+    const smoothScroll = () => {
       if (!isPaused && scrollContainer) {
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        const currentScroll = scrollContainer.scrollLeft;
+        scrollContainer.scrollLeft += 0.5; // Slower smooth continuous scroll for videos
 
-        if (currentScroll >= maxScroll - 10) {
-          // Reset to start
-          scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          // Scroll by one video width (~288px for w-72)
-          scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        // Reset to start when reaching the middle (duplicated content)
+        const scrollWidth = scrollContainer.scrollWidth;
+        const clientWidth = scrollContainer.clientWidth;
+        const halfWay = (scrollWidth - clientWidth) / 2;
+
+        if (scrollContainer.scrollLeft >= halfWay) {
+          scrollContainer.scrollLeft = 0;
         }
       }
-    }, 3000); // Scroll every 3 seconds
+      animationFrame = requestAnimationFrame(smoothScroll);
+    };
 
     const handleMouseEnter = () => {
       isPaused = true;
@@ -135,8 +137,10 @@ export default function SocialProof() {
     scrollContainer.addEventListener('mouseenter', handleMouseEnter);
     scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
+    animationFrame = requestAnimationFrame(smoothScroll);
+
     return () => {
-      clearInterval(scrollInterval);
+      cancelAnimationFrame(animationFrame);
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
       scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
@@ -184,14 +188,15 @@ export default function SocialProof() {
           {/* Scrollable Container */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory"
+            className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}
           >
-            {videos.map((video, index) => (
-              <VideoCard key={video.id} video={video} index={index} />
+            {/* Render videos twice for seamless loop */}
+            {[...videos, ...videos].map((video, index) => (
+              <VideoCard key={`${video.id}-${index}`} video={video} index={index % videos.length} />
             ))}
           </div>
         </motion.div>

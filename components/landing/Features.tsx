@@ -54,21 +54,23 @@ export default function Features() {
     if (!scrollContainer) return;
 
     let isPaused = false;
+    let animationFrame: number;
 
-    const scrollInterval = setInterval(() => {
+    const smoothScroll = () => {
       if (!isPaused && scrollContainer) {
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        const currentScroll = scrollContainer.scrollLeft;
+        scrollContainer.scrollLeft += 1; // Smooth continuous scroll
 
-        if (currentScroll >= maxScroll - 10) {
-          // Reset to start
-          scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          // Scroll by card width
-          scrollContainer.scrollBy({ left: 400, behavior: 'smooth' });
+        // Reset to start when reaching the middle (duplicated content)
+        const scrollWidth = scrollContainer.scrollWidth;
+        const clientWidth = scrollContainer.clientWidth;
+        const halfWay = (scrollWidth - clientWidth) / 2;
+
+        if (scrollContainer.scrollLeft >= halfWay) {
+          scrollContainer.scrollLeft = 0;
         }
       }
-    }, 3000); // Scroll every 3 seconds
+      animationFrame = requestAnimationFrame(smoothScroll);
+    };
 
     const handleMouseEnter = () => {
       isPaused = true;
@@ -81,8 +83,10 @@ export default function Features() {
     scrollContainer.addEventListener('mouseenter', handleMouseEnter);
     scrollContainer.addEventListener('mouseleave', handleMouseLeave);
 
+    animationFrame = requestAnimationFrame(smoothScroll);
+
     return () => {
-      clearInterval(scrollInterval);
+      cancelAnimationFrame(animationFrame);
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
       scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
     };
@@ -156,14 +160,15 @@ export default function Features() {
           <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none hidden md:block" />
 
           {/* Scrollable Container */}
-          <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide snap-x snap-mandatory px-6">
-            {features.map((feature, index) => (
+          <div ref={scrollRef} className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide px-6">
+            {/* Render features twice for seamless loop */}
+            {[...features, ...features].map((feature, index) => (
               <motion.div
-                key={feature.title}
+                key={`${feature.title}-${index}`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex-shrink-0 w-80 md:w-96 snap-center"
+                transition={{ duration: 0.5, delay: (index % features.length) * 0.1 }}
+                className="flex-shrink-0 w-80 md:w-96"
               >
                 <div className="border-2 border-gray-200 rounded-3xl p-8 bg-white hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
                   {/* Visual/Image Placeholder */}

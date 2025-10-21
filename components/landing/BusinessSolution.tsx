@@ -96,7 +96,7 @@ export default function BusinessSolution() {
         </motion.div>
 
         {/* Solutions Grid */}
-        <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto mb-20">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
           {solutions.map((solution, index) => (
             <motion.div
               key={solution.title}
@@ -104,36 +104,21 @@ export default function BusinessSolution() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3 + index * 0.1 }}
             >
-              <div className="border-2 border-gray-200 rounded-3xl p-8 bg-white hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
+              <div className="border-2 border-gray-200 rounded-2xl p-6 bg-white hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
                 {/* Visual Placeholder */}
-                <div className={`relative aspect-video bg-gradient-to-br ${solution.gradient} opacity-10 rounded-2xl border-2 border-gray-200 flex items-center justify-center mb-6`}>
-                  <div className="text-7xl">{solution.visual}</div>
-                </div>
-
-                {/* Icon */}
-                <div className={`inline-flex w-14 h-14 bg-gradient-to-br ${solution.gradient} rounded-xl items-center justify-center mb-6 shadow-lg`}>
-                  <solution.icon className="w-7 h-7 text-white" strokeWidth={2} />
+                <div className={`relative aspect-video bg-gradient-to-br ${solution.gradient} opacity-10 rounded-xl border-2 border-gray-200 flex items-center justify-center mb-5`}>
+                  <div className="text-6xl">{solution.visual}</div>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-2xl font-bold font-poppins mb-4 text-gray-900">
+                <h3 className="text-xl font-bold font-poppins mb-3 text-gray-900">
                   {solution.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-600 leading-relaxed text-lg mb-6">
+                <p className="text-gray-600 leading-relaxed text-sm">
                   {solution.description}
                 </p>
-
-                {/* Features */}
-                <div className="space-y-2">
-                  {solution.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-gray-700">
-                      <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${solution.gradient}`} />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
             </motion.div>
           ))}

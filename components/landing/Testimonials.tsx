@@ -67,6 +67,9 @@ export default function Testimonials() {
             <span className="text-gray-900">Loved by Thousands of</span>{' '}
             <span className="gradient-text">Fashion Enthusiasts</span>
           </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-4">
+            See what our community is saying about their FitCheck experience
+          </p>
           <div className="flex items-center justify-center gap-2 text-lg text-gray-600">
             <div className="flex">
               {[1,2,3,4,5].map((i) => (
