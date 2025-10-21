@@ -103,6 +103,45 @@ export default function SocialProof() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const scrollContainer = scrollRef.current;
+    if (!scrollContainer) return;
+
+    let isPaused = false;
+
+    const scrollInterval = setInterval(() => {
+      if (!isPaused && scrollContainer) {
+        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+        const currentScroll = scrollContainer.scrollLeft;
+
+        if (currentScroll >= maxScroll - 10) {
+          // Reset to start
+          scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by one video width (~288px for w-72)
+          scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+      }
+    }, 3000); // Scroll every 3 seconds
+
+    const handleMouseEnter = () => {
+      isPaused = true;
+    };
+
+    const handleMouseLeave = () => {
+      isPaused = false;
+    };
+
+    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
+    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      clearInterval(scrollInterval);
+      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
+      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
   return (
     <section className="py-24 md:py-32 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
       {/* Minimal background */}
