@@ -44,7 +44,7 @@ export default function VirtualTryOnPreview() {
             <span className="gradient-text">The Magic Happens</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            The website is perfect for quick virtual try-ons. But the FitCheck app? That's the real deal with AI-powered outfit analysis, smart wardrobe organization, and so much more.
+            The website is perfect for quick virtual try-ons. But the FitCheck app? That&apos;s the real deal with AI-powered outfit analysis, smart wardrobe organization, and so much more.
           </p>
         </motion.div>
 
