@@ -6,15 +6,17 @@ import { useRef, useState, useEffect } from 'react';
 import { Play, Pause, Instagram, Music2 } from 'lucide-react';
 
 const videos = [
-  { id: '2', src: '/videos/2.mp4', platform: 'instagram' },
-  { id: '3', src: '/videos/3.mp4', platform: 'tiktok' },
-  { id: '4', src: '/videos/4.mp4', platform: 'instagram' },
-  { id: '5', src: '/videos/5.mp4', platform: 'tiktok' },
-  { id: '6', src: '/videos/6.mp4', platform: 'instagram' },
-  { id: '7', src: '/videos/7.mp4', platform: 'tiktok' },
-  { id: '8', src: '/videos/8.mp4', platform: 'instagram' },
-  { id: '9', src: '/videos/9.mp4', platform: 'tiktok' },
-  { id: '10', src: '/videos/10.mp4', platform: 'instagram' },
+  { id: '1', src: '/videos/1.mp4', platform: 'instagram' },
+  { id: '2', src: '/videos/2.mp4', platform: 'tiktok' },
+  { id: '3', src: '/videos/3.mp4', platform: 'instagram' },
+  { id: '4', src: '/videos/4.mp4', platform: 'tiktok' },
+  { id: '5', src: '/videos/5.mp4', platform: 'instagram' },
+  { id: '6', src: '/videos/6.mp4', platform: 'tiktok' },
+  { id: '7', src: '/videos/7.mp4', platform: 'instagram' },
+  { id: '8', src: '/videos/8.mp4', platform: 'tiktok' },
+  { id: '9', src: '/videos/9.mp4', platform: 'instagram' },
+  { id: '10', src: '/videos/10.mp4', platform: 'tiktok' },
+  { id: '11', src: '/videos/11.mp4', platform: 'instagram' },
 ];
 
 function VideoCard({ video, index }: { video: typeof videos[0]; index: number }) {
