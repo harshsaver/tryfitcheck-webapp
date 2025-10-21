@@ -42,7 +42,7 @@ export default function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="how-it-works" className="py-24 md:py-32 bg-white relative overflow-hidden">
+    <section id="how-it-works" className="py-16 md:py-24 bg-white relative overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-[0.02]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -69,56 +69,54 @@ export default function HowItWorks() {
           </p>
         </motion.div>
 
-        {/* Steps Grid - Premium Layout */}
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+        {/* Steps - Single Row Horizontal Scroll */}
+        <div className="max-w-7xl mx-auto relative">
+          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
             {steps.map((step, index) => (
               <motion.div
                 key={step.number}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.7, delay: index * 0.15 }}
-                className="group relative"
+                transition={{ duration: 0.7, delay: index * 0.1 }}
+                className="flex-shrink-0 w-72 group relative"
               >
                 {/* Step Card */}
-                <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-2xl p-10 border border-gray-200 hover:border-primary-pink/30 transition-all duration-500 hover:shadow-2xl">
-                  {/* Step Number - Large & Elegant */}
-                  <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-2xl flex items-center justify-center shadow-xl">
-                    <span className="text-2xl font-bold text-white">{step.number}</span>
+                <div className="relative bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
+                  {/* Step Number */}
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-xl flex items-center justify-center shadow-lg mb-4">
+                    <span className="text-xl font-bold text-white">{step.number}</span>
                   </div>
 
                   {/* Visual Element */}
-                  <div className="mb-8 flex items-center justify-between">
-                    <div className="w-20 h-20 bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl flex items-center justify-center">
-                      <step.icon className="w-10 h-10 text-primary-pink" strokeWidth={1.5} />
-                    </div>
-                    <div className="text-7xl opacity-20 group-hover:opacity-30 transition-opacity duration-500">
-                      {step.visual}
-                    </div>
+                  <div className="text-5xl mb-4 opacity-80">
+                    {step.visual}
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-4 text-gray-900">
+                  <h3 className="text-xl font-bold font-poppins mb-3 text-gray-900">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 text-lg leading-relaxed">
+                  <p className="text-gray-600 text-sm leading-relaxed">
                     {step.description}
                   </p>
 
-                  {/* Connecting Line for Desktop */}
+                  {/* Arrow Connector */}
                   {index < 3 && (
-                    <div className="hidden md:block absolute top-1/2 -right-8 lg:-right-12 w-8 lg:w-12 h-0.5 bg-gradient-to-r from-primary-pink/50 to-transparent"
-                      style={{
-                        transform: index % 2 === 0 ? 'translateY(-50%)' : 'translateY(-50%) rotate(90deg) translateX(100px)',
-                        transformOrigin: 'left center'
-                      }}
-                    />
+                    <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-primary-pink/40 text-2xl">
+                      →
+                    </div>
                   )}
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
+
+        <style jsx global>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
 
         {/* CTA Section */}
         <motion.div

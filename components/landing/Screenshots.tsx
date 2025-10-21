@@ -11,7 +11,7 @@ export default function Screenshots() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="examples" className="py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+    <section id="examples" className="py-16 md:py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Minimal background */}
       <div className="absolute inset-0 opacity-[0.02]" style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,

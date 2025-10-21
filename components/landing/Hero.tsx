@@ -45,7 +45,7 @@ export default function Hero() {
 
             {/* Subheadline */}
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
-              See yourself in any outfit instantly. AI-powered, hyper-realistic results in seconds – no downloads, no commitment.
+              See yourself in any outfit instantly. AI-powered, hyper-realistic results in seconds. Start on web or unlock premium features in-app.
             </p>
 
             {/* Key Benefits */}
