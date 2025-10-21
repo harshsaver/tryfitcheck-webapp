@@ -16,7 +16,7 @@ const features = [
   },
   {
     title: 'Instant AI Results',
-    description: 'Get your virtual try-on in just 5-10 seconds. No waiting, no complicated setup—just upload and see yourself wearing it.',
+    description: 'Get your virtual try-on in just 5-10 seconds. No waiting, no complicated setup - just upload and see yourself wearing it.',
     visual: '⚡',
     gradient: 'from-yellow-500 to-orange-500',
     example: 'Lightning-fast processing with hyper-realistic AI',

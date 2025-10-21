@@ -5,6 +5,7 @@ import { useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function VirtualTryOnPreview() {
   const ref = useRef(null);
@@ -168,35 +169,47 @@ export default function VirtualTryOnPreview() {
 
               {/* Right - Visual */}
               <div className="relative">
-                <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-2xl">
-                  {activeTab === 'web' ? (
+                {activeTab === 'web' ? (
+                  <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center relative overflow-hidden border-4 border-white shadow-2xl">
                     <div className="text-center p-8">
                       <div className="text-8xl mb-4">💳</div>
                       <p className="text-gray-700 font-semibold text-lg">Web Virtual Try-On</p>
                       <p className="text-gray-600 mt-2">From $0.50 per try-on</p>
                     </div>
-                  ) : (
-                    <div className="text-center p-8">
-                      <div className="text-8xl mb-4">📱</div>
-                      <p className="text-gray-700 font-semibold text-lg">FitCheck Premium</p>
-                      <p className="text-gray-600 mt-2">3 Powerful Features</p>
-                    </div>
-                  )}
-
-                  {/* Floating badge */}
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute top-4 right-4 px-4 py-2 bg-white rounded-full shadow-xl border-2 border-primary-pink"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary-pink" />
-                      <span className="text-sm font-bold text-gray-700">
-                        {activeTab === 'web' ? 'Instant' : 'Unlimited'}
-                      </span>
-                    </div>
-                  </motion.div>
-                </div>
+                    <motion.div
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="absolute top-4 right-4 px-4 py-2 bg-white rounded-full shadow-xl border-2 border-primary-pink"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-primary-pink" />
+                        <span className="text-sm font-bold text-gray-700">Instant</span>
+                      </div>
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                    {/* Display each screenshot twice as requested */}
+                    {[1, 2, 3, 1, 2, 3].map((num, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex-shrink-0 w-48"
+                      >
+                        <div className="relative aspect-[9/19.5] rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+                          <Image
+                            src={`/images/screenshots/screenshot${num}.png`}
+                            alt={`App Screenshot ${num}`}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

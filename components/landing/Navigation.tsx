@@ -20,7 +20,7 @@ export default function Navigation() {
 
   const navLinks = [
     { name: 'Features', href: '#features' },
-    { name: 'Screenshots', href: '#screenshots' },
+    { name: 'Screenshots', href: '#examples' },
     { name: 'Download', href: '#download' },
     { name: 'Pricing', href: '/pricing' },
   ];

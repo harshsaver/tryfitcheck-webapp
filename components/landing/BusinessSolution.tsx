@@ -18,7 +18,7 @@ const solutions = [
   {
     icon: Sparkles,
     title: 'Change Clothing on Existing Models',
-    description: 'Already have great model photos? Swap outfits using reference images—whether it&apos;s worn or a product shot.',
+    description: 'Already have great model photos? Swap outfits using reference images - whether it&apos;s worn or a product shot.',
     visual: '📸→👗→💫',
     gradient: 'from-blue-500 to-cyan-500',
     features: ['Reuse existing shots', 'Try multiple outfits', 'Reference any image'],
@@ -69,7 +69,7 @@ export default function BusinessSolution() {
             <span className="gradient-text">For E-Commerce Brands</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Create realistic on-model photos, diversify your catalog, and boost conversions—all without expensive photoshoots
+            Create realistic on-model photos, diversify your catalog, and boost conversions - all without expensive photoshoots
           </p>
         </motion.div>
 
@@ -87,7 +87,7 @@ export default function BusinessSolution() {
               </div>
               <div className="flex-grow">
                 <p className="text-gray-800 font-semibold text-sm md:text-base">
-                  Get Try-On Results in Seconds • Use a single reference image—no lengthy setup or multi-image training required • Perfect for fast-moving fashion brands
+                  Get Try-On Results in Seconds • Use a single reference image - no lengthy setup or multi-image training required • Perfect for fast-moving fashion brands
                 </p>
               </div>
               <div className="flex-shrink-0">
@@ -133,23 +133,29 @@ export default function BusinessSolution() {
           transition={{ duration: 0.7, delay: 0.8 }}
           className="text-center"
         >
-          <div className="inline-block border-2 border-gray-200 rounded-3xl p-12 max-w-3xl bg-white">
-            <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
-              Ready to Transform Your Product Photos?
-            </h3>
-            <p className="text-gray-600 mb-8 text-lg max-w-xl mx-auto leading-relaxed">
-              Join leading e-commerce brands using FitCheck to create professional on-model content at scale.
-            </p>
-            <Link
-              href="/pricing"
-              className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <p className="mt-6 text-sm text-gray-500">
-              From $0.50 per image • Volume pricing available
-            </p>
+          <div className="border-2 border-gray-200 rounded-2xl p-8 max-w-5xl mx-auto bg-white">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-left flex-grow">
+                <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-2 text-gray-900">
+                  Ready to Transform Your Product Photos?
+                </h3>
+                <p className="text-gray-600 text-base">
+                  Join leading e-commerce brands using FitCheck to create professional on-model content at scale.
+                </p>
+              </div>
+              <div className="flex-shrink-0 flex flex-col items-center gap-3">
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105 whitespace-nowrap"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+                <p className="text-xs text-gray-500 whitespace-nowrap">
+                  From $0.50 per image • Volume pricing available
+                </p>
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>
