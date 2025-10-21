@@ -11,29 +11,33 @@ const steps = [
     number: '01',
     icon: Upload,
     title: 'Upload Your Photo',
-    description: 'Choose a full-body photo where you&apos;re standing straight. Our AI works best with clear, well-lit images.',
-    visual: '📸',
+    description: 'Full-body, well-lit photo',
+    action: 'Click to upload',
+    color: 'from-blue-500 to-cyan-500',
   },
   {
     number: '02',
     icon: Sparkles,
     title: 'Select Your Outfit',
-    description: 'Paste a link to any clothing item from your favorite online store or upload a product image.',
-    visual: '👗',
+    description: 'Paste link or upload image',
+    action: 'Browse outfits',
+    color: 'from-purple-500 to-pink-500',
   },
   {
     number: '03',
     icon: Zap,
-    title: 'AI Magic Happens',
-    description: 'Our advanced AI creates a photorealistic visualization of you wearing the outfit in just 5-10 seconds.',
-    visual: '✨',
+    title: 'AI Processing',
+    description: 'Takes only 5-10 seconds',
+    action: 'Processing...',
+    color: 'from-orange-500 to-red-500',
   },
   {
     number: '04',
     icon: Download,
-    title: 'Download & Decide',
-    description: 'Save your try-on result, share with friends, and make confident purchase decisions.',
-    visual: '💫',
+    title: 'Get Your Result',
+    description: 'Download & share instantly',
+    action: 'Download now',
+    color: 'from-green-500 to-emerald-500',
   },
 ];
 
@@ -69,7 +73,7 @@ export default function HowItWorks() {
           </p>
         </motion.div>
 
-        {/* Steps - Single Row Horizontal Scroll */}
+        {/* Interactive Demo Steps */}
         <div className="max-w-7xl mx-auto relative">
           <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
             {steps.map((step, index) => (
@@ -81,28 +85,123 @@ export default function HowItWorks() {
                 className="flex-shrink-0 w-72 group relative"
               >
                 {/* Step Card */}
-                <div className="relative bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full">
-                  {/* Step Number */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-xl flex items-center justify-center shadow-lg mb-4">
-                    <span className="text-xl font-bold text-white">{step.number}</span>
+                <div className="relative bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-primary-pink/30 transition-all duration-500 hover:shadow-xl h-full overflow-hidden">
+                  {/* Step Number Badge */}
+                  <div className="absolute -top-3 -right-3 w-14 h-14 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center shadow-xl z-10">
+                    <span className="text-lg font-bold text-white">{step.number}</span>
                   </div>
 
-                  {/* Visual Element */}
-                  <div className="text-5xl mb-4 opacity-80">
-                    {step.visual}
+                  {/* Interactive Demo Visual */}
+                  <div className={`relative aspect-[4/3] bg-gradient-to-br ${step.color} opacity-10 rounded-xl mb-4 flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 group-hover:border-primary-pink/50 transition-all duration-500`}>
+                    {/* Step 1: Upload Photo Demo */}
+                    {index === 0 && (
+                      <div className="text-center relative z-10">
+                        <motion.div
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="mb-3"
+                        >
+                          <Upload className="w-16 h-16 text-blue-500 mx-auto" strokeWidth={1.5} />
+                        </motion.div>
+                        <div className="absolute inset-0 flex items-end justify-center pb-4">
+                          <div className="px-3 py-1 bg-white/90 rounded-lg text-xs font-semibold text-gray-700 shadow-lg">
+                            📸 person.jpg
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Select Outfit Demo */}
+                    {index === 1 && (
+                      <div className="grid grid-cols-2 gap-2 p-4">
+                        {['👕', '👗', '👔', '🧥'].map((emoji, i) => (
+                          <motion.div
+                            key={i}
+                            whileHover={{ scale: 1.1 }}
+                            className={`aspect-square ${i === 1 ? 'bg-purple-100 border-2 border-purple-500' : 'bg-gray-100'} rounded-lg flex items-center justify-center text-2xl cursor-pointer`}
+                          >
+                            {emoji}
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Step 3: AI Processing Demo */}
+                    {index === 2 && (
+                      <div className="text-center relative">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Zap className="w-16 h-16 text-orange-500 mx-auto" strokeWidth={1.5} />
+                        </motion.div>
+                        <div className="absolute inset-0 flex items-end justify-center pb-4">
+                          <div className="px-3 py-2 bg-orange-100 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <div className="flex gap-1">
+                                <motion.div
+                                  animate={{ opacity: [0, 1, 0] }}
+                                  transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+                                  className="w-2 h-2 bg-orange-500 rounded-full"
+                                />
+                                <motion.div
+                                  animate={{ opacity: [0, 1, 0] }}
+                                  transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
+                                  className="w-2 h-2 bg-orange-500 rounded-full"
+                                />
+                                <motion.div
+                                  animate={{ opacity: [0, 1, 0] }}
+                                  transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
+                                  className="w-2 h-2 bg-orange-500 rounded-full"
+                                />
+                              </div>
+                              <span className="text-xs font-semibold text-orange-700">AI Processing</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Download Result Demo */}
+                    {index === 3 && (
+                      <div className="text-center relative">
+                        <div className="relative">
+                          <div className="text-6xl mb-2">✨</div>
+                          <motion.div
+                            animate={{ y: [0, -5, 0] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                            className="absolute -bottom-6 left-1/2 transform -translate-x-1/2"
+                          >
+                            <Download className="w-8 h-8 text-green-500" strokeWidth={2} />
+                          </motion.div>
+                        </div>
+                        <div className="absolute inset-0 flex items-end justify-center pb-4">
+                          <div className="px-3 py-1 bg-green-100 rounded-lg text-xs font-semibold text-green-700">
+                            result.jpg ready!
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Content */}
-                  <h3 className="text-xl font-bold font-poppins mb-3 text-gray-900">
+                  {/* Title */}
+                  <h3 className="text-lg font-bold font-poppins mb-2 text-gray-900">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm mb-3">
                     {step.description}
                   </p>
 
+                  {/* Action Button */}
+                  <div className={`w-full py-2 px-4 bg-gradient-to-r ${step.color} text-white rounded-lg text-sm font-semibold text-center group-hover:shadow-lg transition-all duration-300`}>
+                    {step.action}
+                  </div>
+
                   {/* Arrow Connector */}
                   {index < 3 && (
-                    <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-primary-pink/40 text-2xl">
+                    <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 text-primary-pink/40 text-2xl z-20">
                       →
                     </div>
                   )}

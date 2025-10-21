@@ -73,24 +73,26 @@ export default function BusinessSolution() {
           </p>
         </motion.div>
 
-        {/* Main Value Prop */}
+        {/* Main Value Prop - Ticker Style */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="max-w-4xl mx-auto mb-20"
+          className="max-w-6xl mx-auto mb-16"
         >
-          <div className="border-2 border-primary-pink/50 rounded-3xl p-12 bg-gradient-to-br from-white to-pink-50/30">
-            <div className="text-center">
-              <div className="inline-block px-6 py-3 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold mb-6 shadow-lg">
+          <div className="relative overflow-hidden border-2 border-primary-pink/30 rounded-full bg-gradient-to-r from-pink-50 via-purple-50 to-pink-50 shadow-lg">
+            <div className="flex items-center gap-6 px-8 py-4">
+              <div className="flex-shrink-0 px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-sm shadow-lg">
                 ⚡ NO TRAINING NEEDED
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
-                Get Try-On Results in Seconds
-              </h3>
-              <p className="text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                Use a single reference image—no lengthy setup or multi-image training required. Perfect for fast-moving fashion brands.
-              </p>
+              <div className="flex-grow">
+                <p className="text-gray-800 font-semibold text-sm md:text-base">
+                  Get Try-On Results in Seconds • Use a single reference image—no lengthy setup or multi-image training required • Perfect for fast-moving fashion brands
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <Zap className="w-6 h-6 text-primary-pink animate-pulse" />
+              </div>
             </div>
           </div>
         </motion.div>
