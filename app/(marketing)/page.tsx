@@ -3,6 +3,7 @@ import Hero from '@/components/landing/Hero';
 import HowItWorks from '@/components/landing/HowItWorks';
 import Features from '@/components/landing/Features';
 import SocialProof from '@/components/landing/SocialProof';
+import BusinessSolution from '@/components/landing/BusinessSolution';
 import VirtualTryOnPreview from '@/components/landing/VirtualTryOnPreview';
 import Testimonials from '@/components/landing/Testimonials';
 import Screenshots from '@/components/landing/Screenshots';
@@ -14,9 +15,10 @@ export default function HomePage() {
     <main className="min-h-screen">
       <Navigation />
       <Hero />
+      <SocialProof />
       <HowItWorks />
       <Features />
-      <SocialProof />
+      <BusinessSolution />
       <VirtualTryOnPreview />
       <Testimonials />
       <Screenshots />

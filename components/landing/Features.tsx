@@ -3,45 +3,37 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Zap, Shield, Smartphone, Camera, Download, Heart, Sparkles, Clock } from 'lucide-react';
+import { Sparkles, Camera, Clock, Heart, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 const features = [
   {
-    icon: Camera,
-    title: 'Hyper-Realistic AI',
-    description: 'Cutting-edge technology creates photorealistic visualizations. See exactly how clothes will look on your body.',
+    title: 'See Yourself in Any Outfit',
+    description: 'Upload your photo and any clothing item to get photorealistic try-on results in seconds. Perfect for online shopping decisions.',
+    visual: '📸→👗→✨',
     gradient: 'from-purple-500 to-pink-500',
+    example: 'Try before you buy from any online store',
   },
   {
-    icon: Zap,
-    title: 'Lightning Fast',
-    description: 'Get your AI-powered virtual try-on in just 5-10 seconds. No waiting, instant results.',
+    title: 'Instant AI Results',
+    description: 'Get your virtual try-on in just 5-10 seconds. No waiting, no complicated setup—just upload and see yourself wearing it.',
+    visual: '⚡',
     gradient: 'from-yellow-500 to-orange-500',
+    example: 'Lightning-fast processing with hyper-realistic AI',
   },
   {
-    icon: Shield,
-    title: 'Privacy First',
-    description: 'Your photos are processed securely and deleted after 24 hours. We never share your images.',
+    title: 'Make Confident Decisions',
+    description: 'Reduce returns and buyer&apos;s remorse. See how clothes actually look on YOUR body before spending money.',
+    visual: '💰→😊',
     gradient: 'from-green-500 to-emerald-500',
+    example: 'Save money by only buying what looks great on you',
   },
   {
-    icon: Smartphone,
-    title: 'Any Device',
-    description: 'Works seamlessly on phone, tablet, or computer. No app download required.',
+    title: 'Privacy & Security First',
+    description: 'Your photos are processed securely and automatically deleted after 24 hours. We never share or permanently store your images.',
+    visual: '🔒',
     gradient: 'from-blue-500 to-cyan-500',
-  },
-  {
-    icon: Download,
-    title: 'Download & Share',
-    description: 'Save your try-on results or share them with friends to get opinions before buying.',
-    gradient: 'from-pink-500 to-rose-500',
-  },
-  {
-    icon: Heart,
-    title: 'Shop Confidently',
-    description: 'Make smarter decisions. Reduce returns and only buy what looks great on you.',
-    gradient: 'from-red-500 to-pink-500',
+    example: '100% secure with automatic photo deletion',
   },
 ];
 
@@ -59,7 +51,7 @@ export default function Features() {
   return (
     <section id="features" className="py-24 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Minimal background */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
+      <div className="absolute inset-0 opacity-[0.02]" style={{
         backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
         backgroundSize: '40px 40px'
       }} />
@@ -112,47 +104,52 @@ export default function Features() {
           ))}
         </motion.div>
 
-        {/* Features Grid - Clean Luxury Layout */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+        {/* Features - Visual Examples */}
+        <div className="space-y-16 max-w-6xl mx-auto mb-20">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: index * 0.1 }}
-              className="group"
+              transition={{ duration: 0.7, delay: index * 0.15 }}
+              className={`grid md:grid-cols-2 gap-12 items-center ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
             >
-              <div className="h-full">
-                {/* Icon */}
-                <div className="mb-6">
-                  <div className={`inline-flex w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <feature.icon className="w-7 h-7 text-white" strokeWidth={2} />
+              {/* Visual/Image Placeholder */}
+              <div className={`${index % 2 === 1 ? 'md:order-2' : ''}`}>
+                <div className={`relative aspect-square bg-gradient-to-br ${feature.gradient} opacity-10 rounded-3xl border-2 border-gray-200 flex items-center justify-center overflow-hidden`}>
+                  <div className="text-9xl">{feature.visual}</div>
+                  <div className="absolute bottom-6 left-6 right-6 px-6 py-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl">
+                    <p className="text-sm font-semibold text-gray-700">
+                      {feature.example}
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                {/* Title */}
-                <h3 className="text-2xl font-bold font-poppins mb-4 text-gray-900">
+              {/* Content */}
+              <div className={`${index % 2 === 1 ? 'md:order-1' : ''}`}>
+                <div className={`inline-block w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl mb-6 shadow-lg`} />
+
+                <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
                   {feature.title}
                 </h3>
 
-                {/* Description */}
-                <p className="text-gray-600 leading-relaxed text-lg">
+                <p className="text-gray-600 leading-relaxed text-lg mb-6">
                   {feature.description}
                 </p>
 
-                {/* Subtle underline on hover */}
-                <div className={`mt-6 h-1 w-0 group-hover:w-16 bg-gradient-to-r ${feature.gradient} transition-all duration-500 rounded-full`} />
+                <div className={`h-1 w-20 bg-gradient-to-r ${feature.gradient} rounded-full`} />
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA - Elegant Minimal */}
+        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.8 }}
-          className="mt-24 text-center"
+          className="text-center"
         >
           <div className="inline-block border-2 border-gray-200 rounded-3xl p-12 max-w-3xl">
             <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
