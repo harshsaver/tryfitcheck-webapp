@@ -18,11 +18,11 @@ export default function HomePage() {
       <SocialProof />
       <HowItWorks />
       <Features />
-      <BusinessSolution />
       <VirtualTryOnPreview />
       <Testimonials />
       <Screenshots />
       <AppDownload />
+      <BusinessSolution />
       <Footer />
     </main>
   );
