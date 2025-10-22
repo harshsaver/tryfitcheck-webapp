@@ -24,7 +24,7 @@ export default function Footer() {
               <h3 className="text-2xl font-bold font-poppins">FitCheck AI</h3>
             </div>
             <p className="text-pink-200 mb-6 max-w-md leading-relaxed">
-              Your AI-powered fashion assistant. Get instant outfit feedback, try clothes virtually, and create your dream wardrobe with AI.
+              Try clothes virtually on the web or get the premium app with AI outfit analysis, wardrobe organization, and unlimited try-ons.
             </p>
             <div className="flex gap-4">
               <a

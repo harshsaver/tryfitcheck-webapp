@@ -60,15 +60,60 @@ export default function VirtualTryOnPreview() {
               ⚡ PREMIUM APP
             </div>
 
-            {/* Features Section */}
-            <div className="max-w-3xl mx-auto text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-sm font-bold mb-6 shadow-lg">
-                <Sparkles className="w-4 h-4" />
-                <span>6 Powerful Features</span>
+            {/* Screenshots Gallery - Top */}
+            <div className="mb-12">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-sm font-bold mb-4 shadow-lg">
+                  <Sparkles className="w-4 h-4" />
+                  <span>See The App In Action</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-2 text-gray-900">
+                  Real Screenshots From The App
+                </h3>
+                <p className="text-gray-600">
+                  Experience the FitCheck interface
+                </p>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
+              <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide justify-center">
+                {/* Display each screenshot twice as requested */}
+                {[1, 2, 3, 1, 2, 3].map((num, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                    transition={{ delay: 0.3 + idx * 0.1 }}
+                    className="flex-shrink-0 w-52"
+                  >
+                    <div className="relative aspect-[9/19.5] rounded-2xl overflow-hidden shadow-xl border-2 border-white/50">
+                      <Image
+                        src={`/images/screenshots/screenshot${num}.png`}
+                        alt={`App Screenshot ${num}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="relative mb-10">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-4 bg-gradient-to-br from-white to-pink-50/30 text-gray-500 text-sm font-semibold">
+                  6 PREMIUM FEATURES
+                </span>
+              </div>
+            </div>
+
+            {/* Features Section - Bottom */}
+            <div className="max-w-3xl mx-auto text-center">
+              <h4 className="text-2xl md:text-3xl font-bold font-poppins mb-4 text-gray-900">
                 FitCheck Premium
-              </h3>
+              </h4>
               <p className="text-gray-600 text-lg mb-10 leading-relaxed">
                 Your complete AI fashion assistant. Everything you need to build your perfect wardrobe and always look your best.
               </p>
@@ -80,7 +125,7 @@ export default function VirtualTryOnPreview() {
                     key={feature}
                     initial={{ opacity: 0, x: -10 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: 0.3 + idx * 0.05 }}
+                    transition={{ delay: 0.5 + idx * 0.05 }}
                     className="flex items-center gap-3"
                   >
                     <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
@@ -92,7 +137,7 @@ export default function VirtualTryOnPreview() {
               </div>
 
               {/* Download Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href={process.env.NEXT_PUBLIC_IOS_APP_URL}
                   target="_blank"
@@ -111,51 +156,6 @@ export default function VirtualTryOnPreview() {
                   <span>Get it on Google Play</span>
                   <ArrowRight className="w-5 h-5" />
                 </a>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="relative mb-10">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <span className="px-4 bg-gradient-to-br from-white to-pink-50/30 text-gray-500 text-sm font-semibold">
-                  SEE IT IN ACTION
-                </span>
-              </div>
-            </div>
-
-            {/* Screenshots Gallery */}
-            <div>
-              <div className="text-center mb-8">
-                <h4 className="text-xl md:text-2xl font-bold font-poppins mb-2 text-gray-900">
-                  Real Screenshots From The App
-                </h4>
-                <p className="text-gray-600">
-                  See what the FitCheck experience looks like
-                </p>
-              </div>
-              <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide justify-center">
-                {/* Display each screenshot twice as requested */}
-                {[1, 2, 3, 1, 2, 3].map((num, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ delay: 0.5 + idx * 0.1 }}
-                    className="flex-shrink-0 w-52"
-                  >
-                    <div className="relative aspect-[9/19.5] rounded-2xl overflow-hidden shadow-xl border-2 border-white/50">
-                      <Image
-                        src={`/images/screenshots/screenshot${num}.png`}
-                        alt={`App Screenshot ${num}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </motion.div>
-                ))}
               </div>
             </div>
           </div>
