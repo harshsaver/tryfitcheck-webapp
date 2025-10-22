@@ -49,19 +49,20 @@ export default function VirtualTryOnPreview() {
         </motion.div>
 
         {/* Main App Showcase */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="max-w-5xl mx-auto mb-16"
-        >
-          <div className="border-2 border-primary-pink/50 rounded-3xl p-10 md:p-12 bg-gradient-to-br from-white to-pink-50/30 relative overflow-hidden">
-            <div className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-bold shadow-lg">
-              ⚡ PREMIUM APP
-            </div>
+        <div className="max-w-6xl mx-auto">
+          {/* Features and Download Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mb-16"
+          >
+            <div className="border-2 border-primary-pink/50 rounded-3xl p-10 md:p-12 bg-gradient-to-br from-white to-pink-50/30 relative overflow-hidden">
+              <div className="absolute top-6 right-6 px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-bold shadow-lg">
+                ⚡ PREMIUM APP
+              </div>
 
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              <div>
+              <div className="max-w-3xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full text-sm font-bold mb-6 shadow-lg">
                   <Sparkles className="w-4 h-4" />
                   <span>6 Powerful Features</span>
@@ -69,11 +70,12 @@ export default function VirtualTryOnPreview() {
                 <h3 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-gray-900">
                   FitCheck Premium
                 </h3>
-                <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                <p className="text-gray-600 text-lg mb-10 leading-relaxed">
                   Your complete AI fashion assistant. Everything you need to build your perfect wardrobe and always look your best.
                 </p>
 
-                <div className="space-y-4 mb-10">
+                {/* Features Grid */}
+                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10 text-left max-w-2xl mx-auto">
                   {appFeatures.map((feature, idx) => (
                     <motion.div
                       key={feature}
@@ -85,12 +87,13 @@ export default function VirtualTryOnPreview() {
                       <div className="w-6 h-6 bg-gradient-to-br from-primary-pink to-secondary-purple rounded-full flex items-center justify-center flex-shrink-0">
                         <Check className="w-4 h-4 text-white" strokeWidth={3} />
                       </div>
-                      <span className="text-gray-800 font-medium text-lg">{feature}</span>
+                      <span className="text-gray-800 font-medium">{feature}</span>
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="space-y-3">
+                {/* Download Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
                     href={process.env.NEXT_PUBLIC_IOS_APP_URL}
                     target="_blank"
@@ -111,72 +114,46 @@ export default function VirtualTryOnPreview() {
                   </a>
                 </div>
               </div>
+            </div>
+          </motion.div>
 
-              <div className="flex justify-center md:justify-end">
-                <div className="relative">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="relative w-64 aspect-[9/19.5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
-                  >
+          {/* App Screenshots Gallery */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.5 }}
+          >
+            <div className="text-center mb-10">
+              <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-3 text-gray-900">
+                See The App In Action
+              </h3>
+              <p className="text-gray-600 text-lg">
+                Real screenshots from the FitCheck mobile app
+              </p>
+            </div>
+            <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide justify-center">
+              {/* Display each screenshot twice as requested */}
+              {[1, 2, 3, 1, 2, 3].map((num, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 0.6 + idx * 0.1 }}
+                  className="flex-shrink-0 w-56"
+                >
+                  <div className="relative aspect-[9/19.5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
                     <Image
-                      src="/images/screenshots/screenshot1.png"
-                      alt="FitCheck App Preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.div>
-                  <div className="absolute -bottom-4 -right-4 w-56 aspect-[9/19.5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white opacity-60">
-                    <Image
-                      src="/images/screenshots/screenshot2.png"
-                      alt="FitCheck App Preview"
+                      src={`/images/screenshots/screenshot${num}.png`}
+                      alt={`App Screenshot ${num}`}
                       fill
                       className="object-cover"
                     />
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              ))}
             </div>
-          </div>
-        </motion.div>
-
-        {/* App Screenshots Gallery */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="max-w-6xl mx-auto"
-        >
-          <div className="text-center mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-3 text-gray-900">
-              See The App In Action
-            </h3>
-            <p className="text-gray-600">
-              Real screenshots from the FitCheck mobile app
-            </p>
-          </div>
-          <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide justify-center">
-            {/* Display each screenshot twice as requested */}
-            {[1, 2, 3, 1, 2, 3].map((num, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: 0.6 + idx * 0.1 }}
-                className="flex-shrink-0 w-56"
-              >
-                <div className="relative aspect-[9/19.5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                  <Image
-                    src={`/images/screenshots/screenshot${num}.png`}
-                    alt={`App Screenshot ${num}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
 
       <style jsx global>{`
