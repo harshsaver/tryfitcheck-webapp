@@ -49,7 +49,7 @@ export default function Navigation() {
               />
             </div>
             <span className={`text-xl md:text-2xl font-bold font-poppins transition-colors duration-300 ${
-              isScrolled ? 'gradient-text' : 'text-white'
+              isScrolled ? 'gradient-text' : 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
             }`}>
               FitCheck AI
             </span>
