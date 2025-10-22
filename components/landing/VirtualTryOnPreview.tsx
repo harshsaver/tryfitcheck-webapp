@@ -68,10 +68,10 @@ export default function VirtualTryOnPreview() {
                   <span>See The App In Action</span>
                 </div>
                 <h3 className="text-2xl md:text-3xl font-bold font-poppins mb-2 text-gray-900">
-                  Real Screenshots From The App
+                  Preview The FitCheck Experience
                 </h3>
                 <p className="text-gray-600">
-                  Experience the FitCheck interface
+                  Explore the app&apos;s intuitive interface
                 </p>
               </div>
               <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide justify-center">

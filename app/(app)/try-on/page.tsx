@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function TryOnPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -15,8 +16,7 @@ export default function TryOnPage() {
   const steps = [
     { number: 1, title: 'Upload Your Photo', description: 'Full-body photo works best' },
     { number: 2, title: 'Upload Garment', description: 'The outfit you want to try' },
-    { number: 3, title: 'Select Options', description: 'Choose quality & type' },
-    { number: 4, title: 'Generate', description: 'See yourself in it' },
+    { number: 3, title: 'Configure & Generate', description: 'Select options and create' },
   ];
 
   return (
@@ -150,14 +150,14 @@ export default function TryOnPage() {
               </div>
             )}
 
-            {/* Step 3: Select Options */}
+            {/* Step 3: Configure & Generate */}
             {currentStep === 3 && (
               <div>
                 <h2 className="text-3xl font-bold font-poppins mb-4 text-center">
-                  Select Options
+                  Configure & Generate
                 </h2>
                 <p className="text-gray-600 text-center mb-8">
-                  Choose garment category and generation quality
+                  Choose your options and create your virtual try-on
                 </p>
 
                 {/* Category Selection */}
@@ -206,63 +206,27 @@ export default function TryOnPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 flex justify-between">
-                  <button
-                    onClick={() => setCurrentStep(2)}
-                    className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-primary-pink transition-all"
-                  >
-                    ← Back
-                  </button>
-                  <button
-                    onClick={() => setCurrentStep(4)}
-                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
-                  >
-                    Next Step →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 4: Generate */}
-            {currentStep === 4 && (
-              <div>
-                <h2 className="text-3xl font-bold font-poppins mb-4 text-center">
-                  Ready to Generate!
-                </h2>
-                <p className="text-gray-600 text-center mb-8">
-                  Review your selections and generate your virtual try-on
-                </p>
-
-                {/* Summary */}
-                <div className="bg-gray-50 rounded-2xl p-6 mb-8">
-                  <h3 className="font-semibold mb-4">Summary</h3>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Person Image:</span>
-                      <span className="font-semibold">person.jpg</span>
+                {/* Quick Summary */}
+                <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl p-6 mb-8 border-2 border-primary-pink/30">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Your selection</p>
+                      <p className="font-bold text-gray-900">
+                        {selectedCategory || 'Select category'} • {selectedMode} mode
+                      </p>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Garment Image:</span>
-                      <span className="font-semibold">garment.jpg</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Category:</span>
-                      <span className="font-semibold">{selectedCategory || 'Not selected'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Mode:</span>
-                      <span className="font-semibold capitalize">{selectedMode}</span>
-                    </div>
-                    <div className="border-t pt-3 mt-3 flex justify-between">
-                      <span className="text-gray-900 font-bold">Total Cost:</span>
-                      <span className="text-primary-pink font-bold text-lg">$0.75</span>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600 mb-1">Total cost</p>
+                      <p className="text-2xl font-bold text-primary-pink">
+                        {selectedMode === 'performance' ? '$0.50' : selectedMode === 'quality' ? '$1.00' : '$0.75'}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 flex justify-between">
                   <button
-                    onClick={() => setCurrentStep(3)}
+                    onClick={() => setCurrentStep(2)}
                     className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-primary-pink transition-all"
                   >
                     ← Back
@@ -279,16 +243,64 @@ export default function TryOnPage() {
           </div>
         </motion.div>
 
-        {/* Tips Section */}
+        {/* Tips & Examples Section */}
         <div className="max-w-4xl mx-auto mt-8">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
-            <h3 className="font-semibold mb-3">💡 Tips for Best Results:</h3>
-            <ul className="space-y-2 text-sm text-gray-600">
+          <div className="bg-white rounded-3xl p-8 border-2 border-gray-200">
+            <h3 className="text-2xl font-bold font-poppins mb-6 text-center">💡 Tips for Best Results</h3>
+
+            {/* Tips List */}
+            <ul className="space-y-2 text-gray-600 mb-8 max-w-2xl mx-auto">
               <li>• Use well-lit photos with clear visibility</li>
               <li>• Full-body photos work better than cropped images</li>
               <li>• Stand straight and face the camera directly</li>
               <li>• Choose garments with clear, visible details</li>
             </ul>
+
+            {/* Example Images */}
+            <div>
+              <h4 className="font-semibold text-lg mb-6 text-center">See Example Results</h4>
+              <div className="grid md:grid-cols-3 gap-6">
+                {/* Example 1 - Person */}
+                <div className="text-center">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
+                    <div>
+                      <div className="text-6xl mb-2">📸</div>
+                      <p className="text-sm font-semibold text-gray-600">Your Photo</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500">Upload full-body photo</p>
+                </div>
+
+                {/* Example 2 - Garment */}
+                <div className="text-center">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl border-2 border-dashed border-primary-pink/50 flex items-center justify-center mb-3">
+                    <div>
+                      <div className="text-6xl mb-2">👗</div>
+                      <p className="text-sm font-semibold text-primary-pink">Outfit</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500">Clothing item you want</p>
+                </div>
+
+                {/* Example 3 - Result */}
+                <div className="text-center">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-pink-100 via-purple-100 to-pink-100 rounded-2xl border-2 border-primary-pink flex items-center justify-center mb-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-pink/10 to-secondary-purple/10 animate-pulse"></div>
+                    <div className="relative z-10">
+                      <div className="text-6xl mb-2">✨</div>
+                      <p className="text-sm font-semibold bg-gradient-to-r from-primary-pink to-secondary-purple bg-clip-text text-transparent">
+                        AI Result
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500">See yourself wearing it</p>
+                </div>
+              </div>
+
+              <p className="text-center text-sm text-gray-500 mt-6">
+                * Placeholder images - actual results will show your photo with the garment
+              </p>
+            </div>
           </div>
         </div>
       </div>
