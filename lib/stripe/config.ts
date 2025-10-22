@@ -32,13 +32,13 @@ export const stripeConfig = {
     : getRequiredEnvVar('STRIPE_SECRET_KEY_LIVE'),
 
   // Price IDs for credit packages
-  basicPriceId: isTestMode
-    ? getRequiredEnvVar('STRIPE_BASIC_PRICE_TEST')
-    : getRequiredEnvVar('STRIPE_BASIC_PRICE_LIVE'),
-
   starterPriceId: isTestMode
     ? getRequiredEnvVar('STRIPE_STARTER_PRICE_TEST')
     : getRequiredEnvVar('STRIPE_STARTER_PRICE_LIVE'),
+
+  popularPriceId: isTestMode
+    ? getRequiredEnvVar('STRIPE_POPULAR_PRICE_TEST')
+    : getRequiredEnvVar('STRIPE_POPULAR_PRICE_LIVE'),
 
   proPriceId: isTestMode
     ? getRequiredEnvVar('STRIPE_PRO_PRICE_TEST')
@@ -47,26 +47,29 @@ export const stripeConfig = {
 
 // Credit package configurations
 export const CREDIT_PACKAGES = {
-  BASIC: {
-    name: 'Basic',
-    credits: 1,
-    price: 0.50,
-    priceId: stripeConfig.basicPriceId,
-  },
   STARTER: {
     name: 'Starter',
-    credits: 5,
-    price: 2.00,
+    credits: 20,
+    price: 5.00,
     priceId: stripeConfig.starterPriceId,
-    savings: '20%', // vs 5 × $0.50
+    pricePerCredit: 0.25,
+  },
+  POPULAR: {
+    name: 'Popular',
+    credits: 50,
+    price: 10.00,
+    priceId: stripeConfig.popularPriceId,
+    pricePerCredit: 0.20,
+    savings: '20%',
+    popular: true,
   },
   PRO: {
     name: 'Pro',
-    credits: 15,
-    price: 5.00,
+    credits: 150,
+    price: 25.00,
     priceId: stripeConfig.proPriceId,
-    savings: '33%', // vs 15 × $0.50
-    popular: true,
+    pricePerCredit: 0.17,
+    savings: '32%',
   },
 } as const;
 
