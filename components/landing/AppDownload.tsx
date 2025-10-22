@@ -84,7 +84,7 @@ export default function AppDownload() {
 
               {/* CTA */}
               <Link
-                href="/pricing"
+                href="/try-on"
                 className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
               >
                 <span>Start Try-On</span>
@@ -169,7 +169,7 @@ export default function AppDownload() {
           className="mt-16 text-center"
         >
           <p className="text-gray-600 text-lg">
-            Not sure which to choose? <Link href="/pricing" className="text-primary-pink font-semibold hover:underline">Try web first</Link>, then download the app for the complete experience
+            Not sure which to choose? <Link href="/try-on" className="text-primary-pink font-semibold hover:underline">Try web first</Link>, then download the app for the complete experience
           </p>
         </motion.div>
       </div>

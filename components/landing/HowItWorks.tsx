@@ -225,7 +225,7 @@ export default function HowItWorks() {
           className="mt-20 text-center"
         >
           <Link
-            href="/pricing"
+            href="/try-on"
             className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold text-lg shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105"
           >
             <span>Start Your First Try-On</span>

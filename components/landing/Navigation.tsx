@@ -21,8 +21,8 @@ export default function Navigation() {
   const navLinks = [
     { name: 'Features', href: '#features' },
     { name: 'Screenshots', href: '#examples' },
-    { name: 'Download', href: '#download' },
     { name: 'Pricing', href: '/pricing' },
+    { name: 'Download', href: '#download' },
   ];
 
   return (
@@ -69,7 +69,7 @@ export default function Navigation() {
               </Link>
             ))}
             <Link
-              href="/pricing"
+              href="/try-on"
               className="px-6 py-2.5 bg-gradient-pink text-white font-semibold rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
               Try Now ✨
@@ -125,7 +125,7 @@ export default function Navigation() {
                 </Link>
               ))}
               <Link
-                href="/pricing"
+                href="/try-on"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="block w-full text-center px-6 py-3 bg-gradient-pink text-white font-semibold rounded-full hover:shadow-lg transition-all duration-300"
               >

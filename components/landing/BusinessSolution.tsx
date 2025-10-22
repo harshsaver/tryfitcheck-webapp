@@ -145,7 +145,7 @@ export default function BusinessSolution() {
               </div>
               <div className="flex-shrink-0 flex flex-col items-center gap-3">
                 <Link
-                  href="/pricing"
+                  href="/try-on"
                   className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-xl hover:shadow-2xl hover:shadow-primary-pink/30 transition-all duration-300 hover:scale-105 whitespace-nowrap"
                 >
                   <span>Get Started</span>

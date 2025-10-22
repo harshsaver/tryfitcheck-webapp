@@ -67,7 +67,7 @@ export default function Hero() {
             {/* Primary CTA */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center lg:justify-start">
               <Link
-                href="/pricing"
+                href="/try-on"
                 className="group relative px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-bold text-lg shadow-2xl hover:shadow-primary-pink/50 transition-all duration-300 hover:scale-105 overflow-hidden"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
