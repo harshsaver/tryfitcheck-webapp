@@ -33,8 +33,8 @@ export class GoogleNanoAPIClient {
   private baseUrl: string;
 
   constructor(apiKey?: string, baseUrl?: string) {
-    this.apiKey = apiKey || process.env.GOOGLE_NANO_API_KEY || '';
-    this.baseUrl = baseUrl || process.env.GOOGLE_NANO_API_ENDPOINT || '';
+    this.apiKey = apiKey || process.env.GOOGLE_GEMINI_API_KEY || '';
+    this.baseUrl = baseUrl || 'https://generativelanguage.googleapis.com/v1beta/models';
 
     if (!this.apiKey || !this.baseUrl) {
       throw new Error('Google Nano Banana API credentials are required');
