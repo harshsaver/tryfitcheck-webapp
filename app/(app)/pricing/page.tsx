@@ -39,7 +39,7 @@ export default function PricingPage() {
               </div>
               <h3 className="text-2xl font-bold font-poppins mb-2">Performance</h3>
               <div className="flex items-baseline justify-center gap-2 mb-4">
-                <span className="text-5xl font-bold text-gray-900">$0.50</span>
+                <span className="text-5xl font-bold text-gray-900">$0.10</span>
                 <span className="text-gray-600">per try-on</span>
               </div>
               <p className="text-gray-600">Quick results in ~5 seconds</p>
@@ -81,7 +81,7 @@ export default function PricingPage() {
               </div>
               <h3 className="text-2xl font-bold font-poppins mb-2">Balanced</h3>
               <div className="flex items-baseline justify-center gap-2 mb-4">
-                <span className="text-5xl font-bold bg-gradient-to-r from-primary-pink to-secondary-purple bg-clip-text text-transparent">$0.75</span>
+                <span className="text-5xl font-bold bg-gradient-to-r from-primary-pink to-secondary-purple bg-clip-text text-transparent">$0.25</span>
                 <span className="text-gray-600">per try-on</span>
               </div>
               <p className="text-gray-600">Great quality in ~8 seconds</p>
@@ -123,7 +123,7 @@ export default function PricingPage() {
               </div>
               <h3 className="text-2xl font-bold font-poppins mb-2">Quality</h3>
               <div className="flex items-baseline justify-center gap-2 mb-4">
-                <span className="text-5xl font-bold text-gray-900">$1.00</span>
+                <span className="text-5xl font-bold text-gray-900">$0.50</span>
                 <span className="text-gray-600">per try-on</span>
               </div>
               <p className="text-gray-600">Best quality in ~12 seconds</p>

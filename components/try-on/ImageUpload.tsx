@@ -1,16 +1,21 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Check } from 'lucide-react';
+import { Upload, X, Check, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
+import { validateImage, createImagePreview, validateImageUrl } from '@/lib/upload';
 
 interface ImageUploadProps {
   title: string;
   description: string;
   icon?: string;
   accept?: string;
-  onImageSelect?: (file: File) => void;
+  onImageSelect?: (file: File | null, url: string) => void;
   allowUrl?: boolean;
+}
+
+interface UploadError {
+  message: string;
 }
 
 export default function ImageUpload({
@@ -25,6 +30,8 @@ export default function ImageUpload({
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('');
   const [urlInput, setUrlInput] = useState('');
+  const [error, setError] = useState<UploadError | null>(null);
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -53,48 +60,68 @@ export default function ImageUpload({
     }
   };
 
-  const handleFile = (file: File) => {
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
-    }
+  const handleFile = async (file: File) => {
+    setError(null);
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
+    // Validate file
+    const validation = validateImage(file);
+    if (!validation.valid) {
+      setError({ message: validation.error || 'Invalid image' });
       return;
     }
 
     setFileName(file.name);
+    setCurrentFile(file);
 
     // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const previewUrl = await createImagePreview(file);
+      setPreview(previewUrl);
 
-    // Call callback
-    if (onImageSelect) {
-      onImageSelect(file);
+      // Call callback with file and preview URL
+      if (onImageSelect) {
+        onImageSelect(file, previewUrl);
+      }
+    } catch (err) {
+      setError({ message: 'Failed to load image preview' });
     }
   };
 
   const handleUrlSubmit = () => {
-    if (urlInput.trim()) {
-      setPreview(urlInput);
-      setFileName('Image from URL');
-      setUrlInput('');
+    setError(null);
+
+    if (!urlInput.trim()) return;
+
+    // Validate URL
+    const validation = validateImageUrl(urlInput);
+    if (!validation.valid) {
+      setError({ message: validation.error || 'Invalid URL' });
+      return;
     }
+
+    setPreview(urlInput);
+    setFileName('Image from URL');
+    setCurrentFile(null);
+
+    // Call callback with URL
+    if (onImageSelect) {
+      onImageSelect(null, urlInput);
+    }
+
+    setUrlInput('');
   };
 
   const clearImage = () => {
     setPreview(null);
     setFileName('');
     setUrlInput('');
+    setError(null);
+    setCurrentFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+    if (onImageSelect) {
+      onImageSelect(null, '');
     }
   };
 
@@ -102,6 +129,14 @@ export default function ImageUpload({
     <div>
       <h3 className="text-xl font-bold font-poppins mb-2">{title}</h3>
       <p className="text-gray-600 mb-6">{description}</p>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <p className="text-red-700 font-medium">{error.message}</p>
+        </div>
+      )}
 
       {!preview ? (
         <>

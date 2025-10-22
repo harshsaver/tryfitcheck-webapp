@@ -2,22 +2,110 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import ImageUpload from '@/components/try-on/ImageUpload';
+import { getStripe, PRICING, PricingMode } from '@/lib/stripe';
+import { uploadImageToStorage } from '@/lib/upload';
 
 export default function TryOnPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [personImage, setPersonImage] = useState<File | null>(null);
-  const [garmentImage, setGarmentImage] = useState<File | null>(null);
+
+  // Image state
+  const [personImageFile, setPersonImageFile] = useState<File | null>(null);
+  const [personImageUrl, setPersonImageUrl] = useState('');
+  const [garmentImageFile, setGarmentImageFile] = useState<File | null>(null);
+  const [garmentImageUrl, setGarmentImageUrl] = useState('');
+
+  // Configuration state
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedMode, setSelectedMode] = useState('balanced');
+  const [selectedMode, setSelectedMode] = useState<PricingMode>('balanced');
+
+  // UI state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const steps = [
     { number: 1, title: 'Upload Your Photo', description: 'Full-body photo works best' },
     { number: 2, title: 'Upload Garment', description: 'The outfit you want to try' },
     { number: 3, title: 'Configure & Generate', description: 'Select options and create' },
   ];
+
+  const handlePersonImageSelect = (file: File | null, url: string) => {
+    setPersonImageFile(file);
+    setPersonImageUrl(url);
+    setError(null);
+  };
+
+  const handleGarmentImageSelect = (file: File | null, url: string) => {
+    setGarmentImageFile(file);
+    setGarmentImageUrl(url);
+    setError(null);
+  };
+
+  const canProceedStep1 = personImageUrl !== '';
+  const canProceedStep2 = garmentImageUrl !== '';
+  const canGenerate = selectedCategory !== '';
+
+  const handleGenerate = async () => {
+    if (!canGenerate) {
+      setError('Please select a garment category');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Upload images to storage if they're files (not URLs)
+      let finalPersonImageUrl = personImageUrl;
+      let finalGarmentImageUrl = garmentImageUrl;
+
+      if (personImageFile) {
+        finalPersonImageUrl = await uploadImageToStorage(personImageFile);
+      }
+
+      if (garmentImageFile) {
+        finalGarmentImageUrl = await uploadImageToStorage(garmentImageFile);
+      }
+
+      // Create Stripe checkout session
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mode: selectedMode,
+          personImageUrl: finalPersonImageUrl,
+          garmentImageUrl: finalGarmentImageUrl,
+          category: selectedCategory,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      // Redirect to Stripe Checkout
+      const stripe = await getStripe();
+      const { error: stripeError } = await stripe!.redirectToCheckout({
+        sessionId: data.sessionId,
+      });
+
+      if (stripeError) {
+        throw new Error(stripeError.message);
+      }
+    } catch (err: any) {
+      console.error('Generation error:', err);
+      setError(err.message || 'Failed to start checkout. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
@@ -29,12 +117,12 @@ export default function TryOnPage() {
               <ArrowLeft className="w-5 h-5" />
               <span className="font-semibold">Back to Home</span>
             </Link>
-            <div className="flex items-center gap-3">
-              <div className="px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-semibold">
-                <Sparkles className="w-4 h-4 inline mr-2" />
-                3 Credits
-              </div>
-            </div>
+            <Link
+              href="/pricing"
+              className="px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-semibold hover:shadow-lg transition-all"
+            >
+              View Pricing
+            </Link>
           </div>
         </div>
       </nav>
@@ -73,6 +161,15 @@ export default function TryOnPage() {
           </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="max-w-4xl mx-auto mb-6">
+            <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4 text-red-700 text-center">
+              {error}
+            </div>
+          </div>
+        )}
+
         {/* Step Content */}
         <motion.div
           key={currentStep}
@@ -92,20 +189,19 @@ export default function TryOnPage() {
                   Choose a full-body photo where you&apos;re standing straight for best results
                 </p>
 
-                {/* Image Upload Placeholder */}
-                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-primary-pink transition-colors cursor-pointer">
-                  <div className="text-6xl mb-4">📸</div>
-                  <p className="text-gray-700 font-semibold mb-2">Drag & drop your photo here</p>
-                  <p className="text-gray-500 text-sm mb-4">or click to browse</p>
-                  <button className="px-6 py-3 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold">
-                    Choose File
-                  </button>
-                </div>
+                <ImageUpload
+                  title=""
+                  description=""
+                  icon="📸"
+                  onImageSelect={handlePersonImageSelect}
+                  allowUrl={false}
+                />
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-8 flex justify-end">
                   <button
                     onClick={() => setCurrentStep(2)}
-                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                    disabled={!canProceedStep1}
+                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next Step →
                   </button>
@@ -123,17 +219,15 @@ export default function TryOnPage() {
                   Upload the clothing item or paste a link from any online store
                 </p>
 
-                {/* Garment Upload Placeholder */}
-                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center hover:border-primary-pink transition-colors cursor-pointer">
-                  <div className="text-6xl mb-4">👗</div>
-                  <p className="text-gray-700 font-semibold mb-2">Drag & drop garment image</p>
-                  <p className="text-gray-500 text-sm mb-4">or paste a product URL</p>
-                  <button className="px-6 py-3 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold">
-                    Choose File
-                  </button>
-                </div>
+                <ImageUpload
+                  title=""
+                  description=""
+                  icon="👗"
+                  onImageSelect={handleGarmentImageSelect}
+                  allowUrl={true}
+                />
 
-                <div className="mt-6 flex justify-between">
+                <div className="mt-8 flex justify-between">
                   <button
                     onClick={() => setCurrentStep(1)}
                     className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-primary-pink transition-all"
@@ -142,7 +236,8 @@ export default function TryOnPage() {
                   </button>
                   <button
                     onClick={() => setCurrentStep(3)}
-                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+                    disabled={!canProceedStep2}
+                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next Step →
                   </button>
@@ -185,9 +280,9 @@ export default function TryOnPage() {
                   <h3 className="font-semibold text-lg mb-4">Generation Mode</h3>
                   <div className="grid grid-cols-3 gap-4">
                     {[
-                      { id: 'performance', name: 'Performance', time: '~5s', cost: '$0.50' },
-                      { id: 'balanced', name: 'Balanced', time: '~8s', cost: '$0.75' },
-                      { id: 'quality', name: 'Quality', time: '~12s', cost: '$1.00' },
+                      { id: 'performance' as PricingMode, name: 'Performance', time: '~5s', cost: PRICING.performance.display },
+                      { id: 'balanced' as PricingMode, name: 'Balanced', time: '~8s', cost: PRICING.balanced.display },
+                      { id: 'quality' as PricingMode, name: 'Quality', time: '~12s', cost: PRICING.quality.display },
                     ].map((mode) => (
                       <button
                         key={mode.id}
@@ -218,7 +313,7 @@ export default function TryOnPage() {
                     <div className="text-right">
                       <p className="text-sm text-gray-600 mb-1">Total cost</p>
                       <p className="text-2xl font-bold text-primary-pink">
-                        {selectedMode === 'performance' ? '$0.50' : selectedMode === 'quality' ? '$1.00' : '$0.75'}
+                        {PRICING[selectedMode].display}
                       </p>
                     </div>
                   </div>
@@ -227,15 +322,27 @@ export default function TryOnPage() {
                 <div className="mt-6 flex justify-between">
                   <button
                     onClick={() => setCurrentStep(2)}
-                    className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-primary-pink transition-all"
+                    disabled={isLoading}
+                    className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-primary-pink transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     ← Back
                   </button>
                   <button
-                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                    onClick={handleGenerate}
+                    disabled={isLoading || !canGenerate}
+                    className="px-8 py-4 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Sparkles className="w-5 h-5" />
-                    Generate Try-On
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Generate Try-On
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -248,59 +355,63 @@ export default function TryOnPage() {
           <div className="bg-white rounded-3xl p-8 border-2 border-gray-200">
             <h3 className="text-2xl font-bold font-poppins mb-6 text-center">💡 Tips for Best Results</h3>
 
-            {/* Tips List */}
-            <ul className="space-y-2 text-gray-600 mb-8 max-w-2xl mx-auto">
-              <li>• Use well-lit photos with clear visibility</li>
-              <li>• Full-body photos work better than cropped images</li>
-              <li>• Stand straight and face the camera directly</li>
-              <li>• Choose garments with clear, visible details</li>
+            <ul className="space-y-3 mb-10 max-w-2xl mx-auto">
+              <li className="flex items-start gap-3">
+                <span className="text-primary-pink mt-1">•</span>
+                <span className="text-gray-700">Use a full-body photo with clear visibility of your body shape</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary-pink mt-1">•</span>
+                <span className="text-gray-700">Stand straight with arms slightly away from your body</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary-pink mt-1">•</span>
+                <span className="text-gray-700">Choose garment images with clear, frontal view and good lighting</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary-pink mt-1">•</span>
+                <span className="text-gray-700">Quality mode gives the most realistic results but takes longer</span>
+              </li>
             </ul>
 
-            {/* Example Images */}
-            <div>
-              <h4 className="font-semibold text-lg mb-6 text-center">See Example Results</h4>
-              <div className="grid md:grid-cols-3 gap-6">
-                {/* Example 1 - Person */}
-                <div className="text-center">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center mb-3">
-                    <div>
-                      <div className="text-6xl mb-2">📸</div>
-                      <p className="text-sm font-semibold text-gray-600">Your Photo</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">Upload full-body photo</p>
-                </div>
+            <h4 className="text-xl font-bold font-poppins mb-6 text-center">See Example Results</h4>
+            <p className="text-center text-gray-500 text-sm mb-6">Here&apos;s how the AI transforms your photos into realistic try-ons</p>
 
-                {/* Example 2 - Garment */}
-                <div className="text-center">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl border-2 border-dashed border-primary-pink/50 flex items-center justify-center mb-3">
-                    <div>
-                      <div className="text-6xl mb-2">👗</div>
-                      <p className="text-sm font-semibold text-primary-pink">Outfit</p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">Clothing item you want</p>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Example 1 - Person */}
+              <div className="text-center">
+                <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex flex-col items-center justify-center mb-4 border-2 border-gray-300">
+                  <div className="text-6xl mb-2">📸</div>
+                  <p className="text-sm font-semibold text-gray-600">Step 1</p>
                 </div>
-
-                {/* Example 3 - Result */}
-                <div className="text-center">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-pink-100 via-purple-100 to-pink-100 rounded-2xl border-2 border-primary-pink flex items-center justify-center mb-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-pink/10 to-secondary-purple/10 animate-pulse"></div>
-                    <div className="relative z-10">
-                      <div className="text-6xl mb-2">✨</div>
-                      <p className="text-sm font-semibold bg-gradient-to-r from-primary-pink to-secondary-purple bg-clip-text text-transparent">
-                        AI Result
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500">See yourself wearing it</p>
-                </div>
+                <p className="font-semibold text-gray-900 mb-1">Your Photo</p>
+                <p className="text-sm text-gray-600">Upload a full-body photo</p>
               </div>
 
-              <p className="text-center text-sm text-gray-500 mt-6">
-                * Placeholder images - actual results will show your photo with the garment
-              </p>
+              {/* Example 2 - Garment */}
+              <div className="text-center">
+                <div className="aspect-[3/4] bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex flex-col items-center justify-center mb-4 border-2 border-purple-300">
+                  <div className="text-6xl mb-2">👗</div>
+                  <p className="text-sm font-semibold text-gray-600">Step 2</p>
+                </div>
+                <p className="font-semibold text-gray-900 mb-1">Outfit</p>
+                <p className="text-sm text-gray-600">Add the garment you want</p>
+              </div>
+
+              {/* Example 3 - Result */}
+              <div className="text-center">
+                <div className="aspect-[3/4] bg-gradient-to-br from-pink-100 via-purple-100 to-pink-100 rounded-2xl flex flex-col items-center justify-center mb-4 border-2 border-primary-pink animate-pulse">
+                  <div className="text-6xl mb-2">✨</div>
+                  <p className="text-sm font-semibold text-gray-600">Step 3</p>
+                </div>
+                <p className="font-semibold text-gray-900 mb-1">AI Result</p>
+                <p className="text-sm text-gray-600">Get your realistic try-on</p>
+              </div>
             </div>
+
+            <p className="text-center text-xs text-gray-400 mt-6">
+              * Example images coming soon. These are placeholder illustrations.
+            </p>
           </div>
         </div>
       </div>
