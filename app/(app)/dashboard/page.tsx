@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Coins, Sparkles, LogOut, User, CreditCard, History } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface UserData {
   credits: number;
   total_generations: number;
@@ -25,6 +27,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchUserData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUserData = async () => {
