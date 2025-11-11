@@ -5,7 +5,9 @@ export function createClient() {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Missing Supabase environment variables');
+    // Return a mock client that throws helpful errors
+    console.warn('Supabase credentials not configured. Auth features will be unavailable.');
+    throw new Error('Authentication is not configured. Please contact support.');
   }
 
   return createBrowserClient(supabaseUrl, supabaseKey);

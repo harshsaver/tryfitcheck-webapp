@@ -8,21 +8,30 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
  * Using AWS S3-compatible API
  */
 
-const ACCOUNT_ID = process.env.R2_ACCOUNT_ID!;
-const ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
-const SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;
+const ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
+const ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID;
+const SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY;
 const BUCKET_NAME = process.env.R2_BUCKET_NAME || "fitcheck-bucket";
 const PUBLIC_URL = process.env.R2_PUBLIC_URL; // r2.dev URL or custom domain
 
-// Initialize R2 client
-export const r2Client = new S3Client({
-  region: "auto",
-  endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: ACCESS_KEY_ID,
-    secretAccessKey: SECRET_ACCESS_KEY,
-  },
-});
+// Check if R2 is configured
+const isR2Configured = !!(ACCOUNT_ID && ACCESS_KEY_ID && SECRET_ACCESS_KEY);
+
+if (!isR2Configured) {
+  console.warn('Cloudflare R2 not configured. Image storage features will be unavailable.');
+}
+
+// Initialize R2 client with fallback
+export const r2Client = isR2Configured
+  ? new S3Client({
+      region: "auto",
+      endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: ACCESS_KEY_ID!,
+        secretAccessKey: SECRET_ACCESS_KEY!,
+      },
+    })
+  : null;
 
 /**
  * Upload a file to R2 bucket
@@ -36,6 +45,10 @@ export async function uploadToR2(
   filename: string,
   contentType: string = "image/jpeg"
 ): Promise<string> {
+  if (!r2Client || !isR2Configured) {
+    throw new Error("R2 storage is not configured. Please contact support.");
+  }
+
   try {
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
@@ -70,6 +83,10 @@ export async function getPresignedUrl(
   filename: string,
   expiresIn: number = 3600
 ): Promise<string> {
+  if (!r2Client || !isR2Configured) {
+    throw new Error("R2 storage is not configured. Please contact support.");
+  }
+
   try {
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,

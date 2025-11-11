@@ -38,7 +38,7 @@ export class GoogleGeminiImageClient {
     this.modelName = 'gemini-2.5-flash-image';
 
     if (!this.apiKey) {
-      throw new Error('Gemini API key is required. Set GEMINI_API_KEY environment variable.');
+      console.warn('Gemini API key not configured. Gemini try-on features will be unavailable.');
     }
   }
 
@@ -48,6 +48,16 @@ export class GoogleGeminiImageClient {
    */
   async createPrediction(input: GeminiTryOnInput): Promise<GeminiGenerationResponse> {
     const predictionId = `gemini_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+    if (!this.apiKey) {
+      return {
+        id: predictionId,
+        error: {
+          name: 'ConfigurationError',
+          message: 'Gemini API key is not configured. Please contact support.',
+        },
+      };
+    }
 
     try {
       // Convert images to base64 if they're URLs
