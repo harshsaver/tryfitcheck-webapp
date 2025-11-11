@@ -19,8 +19,6 @@ interface UserData {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const supabase = createClient();
-
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +30,7 @@ export default function DashboardPage() {
 
   const fetchUserData = async () => {
     try {
+      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
@@ -59,6 +58,7 @@ export default function DashboardPage() {
   };
 
   const handleSignOut = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/');
   };
