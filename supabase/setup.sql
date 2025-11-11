@@ -11,24 +11,38 @@
 CREATE TABLE IF NOT EXISTS web_users (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
-  credits INTEGER DEFAULT 0,
+  full_name TEXT,
+  avatar_url TEXT,
+  credits INTEGER DEFAULT 3, -- Start with 3 free trial credits
   total_generations INTEGER DEFAULT 0,
+  total_credits_purchased INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Web Payments Table
--- Stores payment and subscription information
+-- Stores one-time payment records (credit purchases, not subscriptions)
 CREATE TABLE IF NOT EXISTS web_payments (
-  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   stripe_customer_id TEXT,
-  subscription_id TEXT UNIQUE,
+  stripe_session_id TEXT UNIQUE,
+  stripe_payment_intent_id TEXT,
+  amount_total INTEGER NOT NULL, -- Amount in cents
+  currency TEXT DEFAULT 'usd',
   status TEXT NOT NULL CHECK (
-    status IN ('active', 'trialing', 'past_due', 'canceled', 'incomplete', 'incomplete_expired')
+    status IN ('pending', 'completed', 'failed', 'refunded')
   ),
-  plan_type TEXT,
-  credits_purchased INTEGER,
-  current_period_end TIMESTAMPTZ,
+  credits_purchased INTEGER NOT NULL,
+  package_name TEXT, -- 'starter', 'popular', 'pro'
+
+  -- DataFast revenue attribution
+  datafast_visitor_id TEXT,
+  datafast_session_id TEXT,
+
+  -- Metadata
+  metadata JSONB DEFAULT '{}'::jsonb,
+
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -41,14 +55,17 @@ CREATE TABLE IF NOT EXISTS web_tryon_generations (
   model_image_url TEXT NOT NULL,
   garment_image_url TEXT NOT NULL,
   output_image_url TEXT,
-  category TEXT,
-  mode TEXT DEFAULT 'balanced',
+  category TEXT CHECK (category IN ('tops', 'bottoms', 'one-pieces', 'auto')),
+  mode TEXT DEFAULT 'balanced' CHECK (mode IN ('performance', 'balanced', 'quality')),
   ai_provider TEXT DEFAULT 'fashn' CHECK (ai_provider IN ('fashn', 'google-nano')),
   status TEXT NOT NULL CHECK (status IN ('processing', 'completed', 'failed')),
   error_message TEXT,
+  external_id TEXT, -- Fashn prediction ID or Google job ID
   credits_used INTEGER DEFAULT 1,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  completed_at TIMESTAMPTZ
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  generation_time_seconds INTEGER
 );
 
 -- ============================================================================
@@ -60,15 +77,20 @@ CREATE INDEX IF NOT EXISTS idx_web_users_email ON web_users(email);
 CREATE INDEX IF NOT EXISTS idx_web_users_credits ON web_users(credits);
 
 -- Web Payments Indexes
+CREATE INDEX IF NOT EXISTS idx_web_payments_user_id ON web_payments(user_id);
 CREATE INDEX IF NOT EXISTS idx_web_payments_stripe_customer ON web_payments(stripe_customer_id);
-CREATE INDEX IF NOT EXISTS idx_web_payments_subscription ON web_payments(subscription_id);
+CREATE INDEX IF NOT EXISTS idx_web_payments_stripe_session ON web_payments(stripe_session_id);
 CREATE INDEX IF NOT EXISTS idx_web_payments_status ON web_payments(status);
+CREATE INDEX IF NOT EXISTS idx_web_payments_created_at ON web_payments(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_web_payments_datafast_visitor ON web_payments(datafast_visitor_id) WHERE datafast_visitor_id IS NOT NULL;
 
 -- Web Try-On Generations Indexes
 CREATE INDEX IF NOT EXISTS idx_web_tryon_user_id ON web_tryon_generations(user_id);
 CREATE INDEX IF NOT EXISTS idx_web_tryon_status ON web_tryon_generations(status);
 CREATE INDEX IF NOT EXISTS idx_web_tryon_created_at ON web_tryon_generations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_web_tryon_ai_provider ON web_tryon_generations(ai_provider);
+CREATE INDEX IF NOT EXISTS idx_web_tryon_external_id ON web_tryon_generations(external_id) WHERE external_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_web_tryon_user_recent ON web_tryon_generations(user_id, created_at DESC);
 
 -- ============================================================================
 -- 3. ENABLE ROW LEVEL SECURITY (RLS)
@@ -175,6 +197,74 @@ GRANT ALL ON web_tryon_generations TO service_role;
 -- 8. UTILITY FUNCTIONS (Optional but useful)
 -- ============================================================================
 
+-- Function to handle new user signups
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.web_users (id, email, full_name, avatar_url)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.raw_user_meta_data->>'avatar_url'
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create trigger on auth.users
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION handle_new_user();
+
+-- Function to deduct credits atomically
+CREATE OR REPLACE FUNCTION deduct_user_credits(
+  p_user_id UUID,
+  p_credits INTEGER DEFAULT 1
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+  v_current_credits INTEGER;
+BEGIN
+  -- Lock the row to prevent race conditions
+  SELECT credits INTO v_current_credits
+  FROM web_users
+  WHERE id = p_user_id
+  FOR UPDATE;
+
+  -- Check if user has enough credits
+  IF v_current_credits < p_credits THEN
+    RETURN FALSE;
+  END IF;
+
+  -- Deduct credits
+  UPDATE web_users
+  SET credits = credits - p_credits,
+      total_generations = total_generations + 1,
+      updated_at = NOW()
+  WHERE id = p_user_id;
+
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to add credits after payment
+CREATE OR REPLACE FUNCTION add_user_credits(
+  p_user_id UUID,
+  p_credits INTEGER
+)
+RETURNS VOID AS $$
+BEGIN
+  UPDATE web_users
+  SET credits = credits + p_credits,
+      total_credits_purchased = total_credits_purchased + p_credits,
+      updated_at = NOW()
+  WHERE id = p_user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Function to get user credits
 CREATE OR REPLACE FUNCTION get_user_credits(user_uuid UUID)
 RETURNS INTEGER AS $$
@@ -208,20 +298,24 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================================================
 
 -- View for user statistics
-CREATE OR REPLACE VIEW user_statistics AS
+CREATE OR REPLACE VIEW user_stats AS
 SELECT
   u.id,
   u.email,
+  u.full_name,
   u.credits,
   u.total_generations,
-  p.plan_type,
-  p.status as payment_status,
-  COUNT(g.id) as completed_generations,
+  u.total_credits_purchased,
+  COUNT(DISTINCT p.id) as total_payments,
+  COALESCE(SUM(p.amount_total), 0) as lifetime_revenue_cents,
+  COUNT(DISTINCT g.id) as total_generations_count,
+  COUNT(DISTINCT g.id) FILTER (WHERE g.status = 'completed') as completed_generations,
+  COUNT(DISTINCT g.id) FILTER (WHERE g.status = 'failed') as failed_generations,
   u.created_at as user_since
 FROM web_users u
-LEFT JOIN web_payments p ON u.id = p.user_id
-LEFT JOIN web_tryon_generations g ON u.id = g.user_id AND g.status = 'completed'
-GROUP BY u.id, u.email, u.credits, u.total_generations, p.plan_type, p.status, u.created_at;
+LEFT JOIN web_payments p ON p.user_id = u.id AND p.status = 'completed'
+LEFT JOIN web_tryon_generations g ON g.user_id = u.id
+GROUP BY u.id;
 
 -- View for recent generations
 CREATE OR REPLACE VIEW recent_generations AS
@@ -236,7 +330,8 @@ SELECT
   g.credits_used,
   g.created_at,
   g.completed_at,
-  EXTRACT(EPOCH FROM (g.completed_at - g.created_at)) as processing_time_seconds
+  g.generation_time_seconds,
+  EXTRACT(EPOCH FROM (g.completed_at - g.created_at)) as calculated_time_seconds
 FROM web_tryon_generations g
 LEFT JOIN web_users u ON g.user_id = u.id
 ORDER BY g.created_at DESC;

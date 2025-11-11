@@ -22,18 +22,32 @@ export function validateImage(file: File): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
-// Upload image to temporary storage (using Vercel Blob or similar)
-export async function uploadImageToStorage(file: File): Promise<string> {
-  // For now, we'll use a placeholder - you can integrate Vercel Blob, Cloudinary, or S3
-  // Converting to base64 for demo purposes (not recommended for production)
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+// Upload image to R2 storage
+export async function uploadImageToStorage(
+  file: File,
+  type: 'person' | 'garment' | 'result' = 'person'
+): Promise<string> {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Upload failed');
+    }
+
+    const data = await response.json();
+    return data.url;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  }
 }
 
 // Validate URL format

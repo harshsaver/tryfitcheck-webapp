@@ -1,25 +1,25 @@
 # FitCheck Web Application
 
-> A beautiful, Gen-Z focused landing page with integrated Virtual Try-On functionality powered by AI.
+> A beautiful, Gen-Z focused web platform with AI-powered Virtual Try-On functionality powered by Fashn API and Google Gemini.
 
 ## 🎯 Project Overview
 
 FitCheck is a comprehensive web application that serves dual purposes:
 1. **Marketing Landing Page**: Beautiful, SEO-optimized landing page for the FitCheck mobile app
-2. **Virtual Try-On Platform**: Credit-based web virtual try-on feature using AI (Fashn API & Google Gemini Nano Banana)
+2. **Virtual Try-On Platform**: Credit-based web virtual try-on feature using AI (Fashn API & Google Gemini)
 
 ## 🏗 Tech Stack
 
 - **Frontend**: Next.js 15 (App Router), React 18, TypeScript
-- **Backend**: Next.js API Routes (separated architecture for future mobile app integration)
+- **Backend**: Next.js API Routes
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth (Google, Apple, Email/Password)
-- **Image Storage**: UploadThing (CDN with URLs in Supabase)
-- **Payments**: Stripe (Checkout + Credits)
+- **Image Storage**: Cloudflare R2 (S3-compatible object storage)
+- **Payments**: Stripe Checkout (Credit Packages)
 - **Analytics**: DataFast (Revenue Attribution)
 - **AI Models**:
   - **Fashn API v1.6** (Primary Virtual Try-On Model)
-  - **Google Gemini 2.5 Flash Image** (Nano Banana - Alternative Try-On Model)
+  - **Google Gemini 2.5 Flash Image** (Alternative Try-On Model)
 - **Deployment**: Vercel
 - **Styling**: Tailwind CSS v3.4 + Framer Motion
 
@@ -38,13 +38,13 @@ FitCheck is a comprehensive web application that serves dual purposes:
   inputs: {
     model_image: string,      // Person photo URL/base64
     garment_image: string,    // Garment photo URL/base64
-    category: "tops" | "bottoms" | "one-pieces",
+    category: "tops" | "bottoms" | "one-pieces" | "auto",
     mode: "performance" | "balanced" | "quality",
     segmentation_free: true,
     moderation_level: "permissive",
     garment_photo_type: "auto",
     num_samples: 1,
-    output_format: "jpeg"
+    output_format: "png"
   }
 }
 ```
@@ -53,39 +53,38 @@ FitCheck is a comprehensive web application that serves dual purposes:
 
 **Pricing:** ~$0.10-0.15 per generation (varies by mode)
 
-### 2. Google Gemini 2.5 Flash Image (Nano Banana)
+### 2. Google Gemini 2.5 Flash Image (Alternative)
 
 **Endpoint:** `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent`
 
 **Model:** `gemini-2.5-flash-image`
 
-**Use Case:** Image editing/composition for virtual try-on
+**Use Case:** AI-powered image composition for virtual try-on
 
-**Example Prompt:**
-```typescript
-[
-  { inline_data: { mime_type: 'image/jpeg', data: base64PersonImage } },
-  { inline_data: { mime_type: 'image/jpeg', data: base64GarmentImage } },
-  "Create a professional e-commerce fashion photo. Take the dress from the second image and show the person from the first image wearing it. Maintain realistic lighting and body proportions."
-]
-```
+**Pricing:** $30 per 1M tokens (~$0.039 per image)
 
-**Pricing:** $30 per 1M tokens (~$0.039 per image, 1290 tokens/image)
+**Key Feature:** Instant generation (no polling required)
 
 ## 💳 Payment System
 
-**Model:** Credit-based (NOT subscription)
+**Model:** Credit-based (Prepaid Credits)
 
-**Pricing Tiers:**
+**Credit Packages:**
 - **Starter**: $5 for 20 credits ($0.25/credit)
-- **Popular**: $10 for 50 credits ($0.20/credit) ⭐ Best Value
-- **Pro**: $25 for 150 credits ($0.17/credit)
+- **Popular**: $10 for 50 credits ($0.20/credit) ⭐ Best Value - 20% savings
+- **Pro**: $25 for 150 credits ($0.17/credit) - 32% savings
+
+**How it Works:**
+1. User signs up → Gets 3 free trial credits automatically
+2. Purchase credit packages via Stripe Checkout
+3. Each virtual try-on costs 1 credit (regardless of AI provider)
+4. Credits never expire
 
 **Stripe Implementation:**
 - Follows [docs/STRIPE_DATAFAST_DOC.md](docs/STRIPE_DATAFAST_DOC.md)
 - DataFast revenue attribution via cookies
 - Webhook-based credit fulfillment
-- Test/Live mode auto-switching
+- Auto-switching between test/live mode
 
 ### Profitability Analysis
 
@@ -96,7 +95,7 @@ FitCheck is a comprehensive web application that serves dual purposes:
 
 **AI Costs (Per Try-On):**
 - Fashn: ~$0.10-0.15
-- Nano Banana: ~$0.039
+- Google Gemini: ~$0.039
 
 **Margin:**
 - Sell at $0.17-0.25/credit
@@ -111,20 +110,26 @@ FitCheck is a comprehensive web application that serves dual purposes:
 - ✅ Email/Password
 
 **Flow:**
-1. User signs up/logs in
-2. Receives 3 free trial credits
-3. Can purchase more credits
-4. Use credits for try-ons
+1. User signs up (Google/Apple/Email)
+2. Automatically receives 3 free trial credits via database trigger
+3. Can purchase more credits anytime
+4. Use credits for virtual try-ons
+
+**Protected Routes:**
+- `/try-on` - Requires authentication
+- `/dashboard` - Requires authentication
+- `/pricing` - Public (requires auth to purchase)
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js 18+
 - Supabase account
-- Stripe account
+- Stripe account (test + live mode)
 - Fashn API key
-- Google Cloud account (for Gemini API)
+- Google Gemini API key
 - DataFast account
+- Cloudflare R2 bucket
 
 ### Installation
 
@@ -137,7 +142,15 @@ cp .env.example .env.local
 # Edit .env.local with your credentials
 
 # Set up Supabase database
-# Follow docs/SUPABASE_SETUP.md to run SQL scripts
+# Go to Supabase Dashboard → SQL Editor
+# Run the script in: supabase/setup.sql
+
+# Configure Supabase Auth providers
+# Enable Google, Apple, Email/Password in Supabase Dashboard
+
+# Create Stripe products and prices
+# Create 3 products in Stripe Dashboard (test + live)
+# Copy price IDs to .env.local
 
 # Run development server
 npm run dev
@@ -154,17 +167,32 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
-# Stripe
+# Stripe (Test Mode)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST=
 STRIPE_SECRET_KEY_TEST=
+STRIPE_STARTER_PRICE_TEST=
+STRIPE_POPULAR_PRICE_TEST=
+STRIPE_PRO_PRICE_TEST=
+
+# Stripe (Live Mode)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE=
 STRIPE_SECRET_KEY_LIVE=
+STRIPE_STARTER_PRICE_LIVE=
+STRIPE_POPULAR_PRICE_LIVE=
+STRIPE_PRO_PRICE_LIVE=
 STRIPE_WEBHOOK_SECRET=
 
 # AI APIs
 FASHN_API_KEY=
 FASHN_API_ENDPOINT=https://api.fashn.ai/v1
-GOOGLE_GEMINI_API_KEY=
+GEMINI_API_KEY=
+
+# Cloudflare R2
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=fitcheck-bucket
+R2_PUBLIC_URL= # Optional: custom domain or r2.dev URL
 
 # DataFast
 NEXT_PUBLIC_DATAFAST_WEBSITE_ID=
@@ -176,48 +204,113 @@ NEXT_PUBLIC_APP_DOMAIN=https://www.tryfitcheck.com
 ## 📝 Implementation Status
 
 ### ✅ Complete
-- Landing page with premium luxury design
-- Influencer social proof section
-- B2B section
-- Fashn API v1.6 integration
-- Pricing page ($0.10, $0.25, $0.50)
-- 3-step try-on UI flow
-- Result page with download
+- ✅ Landing page with premium luxury design
+- ✅ Influencer social proof section
+- ✅ B2B section
+- ✅ **Fashn API v1.6 integration** (fully working with polling)
+- ✅ **Google Gemini 2.5 Flash integration** (instant generation)
+- ✅ **Credit-based payment system**
+- ✅ **Stripe checkout for credit packages**
+- ✅ **Stripe webhook handler** (fulfills credits)
+- ✅ **Authentication system** (Google, Apple, Email)
+- ✅ **Sign up page** (with 3 free credits)
+- ✅ **Sign in page**
+- ✅ **Protected routes middleware**
+- ✅ **Try-on UI with credit system** (deducts 1 credit per generation)
+- ✅ **Pricing page** (shows 3 credit packages)
+- ✅ **User dashboard** (credit balance, stats, account info)
+- ✅ **Database schema** (users, payments, generations)
+- ✅ **Auto-credit fulfillment** via database triggers
 
-### 🚧 In Progress
-- **Authentication system** (Google, Apple, Email/Password)
-- **Credits system** (database + Stripe webhook)
-- **Google Nano Banana implementation**
-- **Image upload with cloud storage**
-- **User dashboard**
+### 🔧 Needs Configuration
+- ⚠️ **Supabase Auth providers** - Configure in Supabase Dashboard
+- ⚠️ **Stripe products** - Create in Stripe Dashboard (test + live)
+- ⚠️ **Stripe webhook** - Add endpoint URL in Stripe Dashboard
+- ⚠️ **DataFast integration** - Connect Stripe to DataFast
 
 ### 📋 Next Steps
 
-1. Set up Supabase (See [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md))
-2. Implement Auth (Google, Apple, Email/Password)
-3. Implement Credits System (Following docs/STRIPE_DATAFAST_DOC.md)
-4. Integrate Google Nano Banana
-5. Deploy to Vercel
+1. **Set up Supabase:**
+   - Run `supabase/setup.sql` in SQL Editor
+   - Enable Google OAuth, Apple Sign-In, Email auth
+   - Set redirect URLs
+
+2. **Create Stripe Products:**
+   - Create 3 products with prices ($5, $10, $25)
+   - Copy price IDs to environment variables
+   - Do this for both test and live mode
+
+3. **Set up Stripe Webhook:**
+   - Add endpoint: `https://yourdomain.com/api/stripe/webhook`
+   - Select events: `checkout.session.completed`, `checkout.session.expired`, `charge.refunded`
+   - Copy signing secret to `STRIPE_WEBHOOK_SECRET`
+
+4. **Configure DataFast:**
+   - Create website in DataFast
+   - Connect Stripe account
+   - Copy website ID to `NEXT_PUBLIC_DATAFAST_WEBSITE_ID`
+
+5. **Deploy to Vercel:**
+   - Push to GitHub
+   - Import to Vercel
+   - Add all environment variables
+   - Deploy
 
 ## 📚 Documentation
 
-- **[docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md)** - Complete database setup with SQL scripts
-- **[docs/UPLOADTHING_SETUP.md](docs/UPLOADTHING_SETUP.md)** - Image storage setup guide
-- **[docs/STRIPE_DATAFAST_DOC.md](docs/STRIPE_DATAFAST_DOC.md)** - Payment & analytics integration
-- **[docs/IMPLEMENTATION_ROADMAP.md](docs/IMPLEMENTATION_ROADMAP.md)** - Step-by-step implementation plan
-- **[docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md)** - Current implementation notes
-- **[docs/STRIPE_FEES_NOTE.md](docs/STRIPE_FEES_NOTE.md)** - Pricing analysis
+- **[supabase/setup.sql](supabase/setup.sql)** - Complete database setup with SQL scripts
+- **[docs/STRIPE_DATAFAST_DOC.md](docs/STRIPE_DATAFAST_DOC.md)** - Payment & analytics integration guide
+- **[MIGRATION_STATUS.md](MIGRATION_STATUS.md)** - Credit-based migration status and checklist
 
 ## 🧪 Testing
 
-### Test Cards (Stripe)
+### Test Stripe Payments
+**Cards:**
 - Success: `4242 4242 4242 4242`
 - Decline: `4000 0000 0000 0002`
 
-### Local Webhook Testing
+**Local Webhook Testing:**
 ```bash
-stripe listen --forward-to localhost:3000/api/webhook
+stripe listen --forward-to localhost:3000/api/stripe/webhook
 stripe trigger checkout.session.completed
+```
+
+### Test User Flow
+1. Sign up → Should get 3 free credits
+2. Go to try-on → Should see credit balance
+3. Upload images and generate → Should deduct 1 credit
+4. Go to pricing → Purchase credits
+5. Check webhook logs → Credits should be added
+6. Dashboard → Should show updated stats
+
+## 🏗 Project Structure
+
+```
+tryfitcheck-webapp/
+├── app/
+│   ├── (auth)/           # Authentication pages
+│   │   ├── login/        # Login page
+│   │   └── signup/       # Sign up page
+│   ├── (app)/            # Protected app pages
+│   │   ├── try-on/       # Virtual try-on interface
+│   │   ├── pricing/      # Credit package pricing
+│   │   └── dashboard/    # User dashboard
+│   ├── (marketing)/      # Public marketing pages
+│   │   └── page.tsx      # Landing page
+│   ├── api/
+│   │   ├── stripe/       # Stripe checkout & webhook
+│   │   ├── tryon/        # Try-on generation & status
+│   │   └── user/         # User credit balance
+│   └── auth/callback/    # OAuth callback handler
+├── lib/
+│   ├── fashn/            # Fashn API client
+│   ├── google-nano/      # Google Gemini client
+│   ├── stripe.ts         # Stripe configuration
+│   └── supabase/         # Supabase clients
+├── components/           # Reusable React components
+├── types/               # TypeScript type definitions
+├── supabase/            # Database setup scripts
+└── middleware.ts        # Auth & route protection
 ```
 
 ## 🔗 Important Links
@@ -226,8 +319,16 @@ stripe trigger checkout.session.completed
 - **Google Play**: https://play.google.com/store/apps/details?id=com.wegalabs.fitcheck
 - **Website**: https://www.tryfitcheck.com
 
+## 🎨 Design Philosophy
+
+- **Gen-Z Aesthetic**: Pink gradients, modern UI, playful interactions
+- **Mobile-First**: Responsive design optimized for all devices
+- **Performance**: Optimized images, lazy loading, code splitting
+- **Accessibility**: WCAG 2.1 compliant, keyboard navigation
+
 ---
 
 **Built with ❤️ for Gen-Z fashionistas**
 
-**Version:** 1.0.0 | **Last Updated:** January 2025
+**Version:** 2.0.0 (Credit-Based System)
+**Last Updated:** November 2025

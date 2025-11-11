@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, Sparkles, Loader2, Coins } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import ImageUpload from '@/components/try-on/ImageUpload';
-import { getStripe, PRICING, PricingMode } from '@/lib/stripe';
 import { uploadImageToStorage } from '@/lib/upload';
 
+type AIProvider = 'fashn' | 'google-nano';
+
 export default function TryOnPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
 
   // Image state
@@ -20,17 +22,44 @@ export default function TryOnPage() {
 
   // Configuration state
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedMode, setSelectedMode] = useState<PricingMode>('balanced');
+  const [selectedAIProvider, setSelectedAIProvider] = useState<AIProvider>('fashn');
 
   // UI state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Credit state
+  const [credits, setCredits] = useState<number | null>(null);
+  const [loadingCredits, setLoadingCredits] = useState(true);
 
   const steps = [
     { number: 1, title: 'Upload Your Photo', description: 'Full-body photo works best' },
     { number: 2, title: 'Upload Garment', description: 'The outfit you want to try' },
     { number: 3, title: 'Configure & Generate', description: 'Select options and create' },
   ];
+
+  // Fetch user credits on mount
+  useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const response = await fetch('/api/user/credits');
+        if (response.ok) {
+          const data = await response.json();
+          setCredits(data.credits);
+        } else if (response.status === 401) {
+          // User not authenticated
+          setCredits(0);
+        }
+      } catch (err) {
+        console.error('Failed to fetch credits:', err);
+        setCredits(0);
+      } finally {
+        setLoadingCredits(false);
+      }
+    };
+
+    fetchCredits();
+  }, []);
 
   const handlePersonImageSelect = (file: File | null, url: string) => {
     setPersonImageFile(file);
@@ -54,6 +83,12 @@ export default function TryOnPage() {
       return;
     }
 
+    // Check if user has sufficient credits
+    if (credits === null || credits < 1) {
+      router.push('/pricing');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -63,48 +98,86 @@ export default function TryOnPage() {
       let finalGarmentImageUrl = garmentImageUrl;
 
       if (personImageFile) {
-        finalPersonImageUrl = await uploadImageToStorage(personImageFile);
+        finalPersonImageUrl = await uploadImageToStorage(personImageFile, 'person');
       }
 
       if (garmentImageFile) {
-        finalGarmentImageUrl = await uploadImageToStorage(garmentImageFile);
+        finalGarmentImageUrl = await uploadImageToStorage(garmentImageFile, 'garment');
       }
 
-      // Create Stripe checkout session
-      const response = await fetch('/api/checkout', {
+      // Call generation API directly
+      const response = await fetch('/api/tryon/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          mode: selectedMode,
-          personImageUrl: finalPersonImageUrl,
-          garmentImageUrl: finalGarmentImageUrl,
-          category: selectedCategory,
+          modelImage: finalPersonImageUrl,
+          garmentImage: finalGarmentImageUrl,
+          category: selectedCategory.toLowerCase(),
+          aiProvider: selectedAIProvider,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session');
+        // Handle insufficient credits error
+        if (response.status === 402) {
+          router.push('/pricing');
+          return;
+        }
+        throw new Error(data.error || 'Failed to generate try-on');
       }
 
-      // Redirect to Stripe Checkout
-      const stripe = await getStripe();
-      const { error: stripeError } = await stripe!.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
+      // Start polling for status
+      const predictionId = data.id;
+      await pollGenerationStatus(predictionId);
 
-      if (stripeError) {
-        throw new Error(stripeError.message);
-      }
     } catch (err: any) {
       console.error('Generation error:', err);
-      setError(err.message || 'Failed to start checkout. Please try again.');
-    } finally {
+      setError(err.message || 'Failed to generate try-on. Please try again.');
       setIsLoading(false);
     }
+  };
+
+  const pollGenerationStatus = async (predictionId: string) => {
+    const maxAttempts = 60; // 60 attempts * 2 seconds = 2 minutes max
+    let attempts = 0;
+
+    const poll = async (): Promise<void> => {
+      try {
+        const response = await fetch(`/api/tryon/status/${predictionId}`);
+        const data = await response.json();
+
+        if (data.status === 'completed') {
+          // Update credits display
+          setCredits((prev) => (prev !== null ? prev - 1 : null));
+          // Redirect to result page
+          router.push(`/try-on/result?id=${predictionId}`);
+          return;
+        } else if (data.status === 'failed') {
+          setError(data.error?.message || 'Generation failed. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Still processing, continue polling
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(poll, 2000); // Poll every 2 seconds
+        } else {
+          setError('Generation timed out. Please check your results page later.');
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Polling error:', err);
+        setError('Failed to check generation status. Please refresh.');
+        setIsLoading(false);
+      }
+    };
+
+    poll();
   };
 
   return (
@@ -117,12 +190,21 @@ export default function TryOnPage() {
               <ArrowLeft className="w-5 h-5" />
               <span className="font-semibold">Back to Home</span>
             </Link>
-            <Link
-              href="/pricing"
-              className="px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-semibold hover:shadow-lg transition-all"
-            >
-              View Pricing
-            </Link>
+            <div className="flex items-center gap-4">
+              {/* Credit Balance */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-primary-pink/30 rounded-full">
+                <Coins className="w-5 h-5 text-primary-pink" />
+                <span className="font-semibold text-gray-900">
+                  {loadingCredits ? '...' : credits !== null ? credits : '0'} Credits
+                </span>
+              </div>
+              <Link
+                href="/pricing"
+                className="px-4 py-2 bg-gradient-to-r from-primary-pink to-secondary-purple text-white rounded-full text-sm font-semibold hover:shadow-lg transition-all"
+              >
+                Buy Credits
+              </Link>
+            </div>
           </div>
         </div>
       </nav>
@@ -275,27 +357,43 @@ export default function TryOnPage() {
                   </div>
                 </div>
 
-                {/* Mode Selection */}
+                {/* AI Provider Selection */}
                 <div className="mb-8">
-                  <h3 className="font-semibold text-lg mb-4">Generation Mode</h3>
-                  <div className="grid grid-cols-3 gap-4">
+                  <h3 className="font-semibold text-lg mb-4">AI Provider</h3>
+                  <div className="grid grid-cols-2 gap-4">
                     {[
-                      { id: 'performance' as PricingMode, name: 'Performance', time: '~5s', cost: PRICING.performance.display },
-                      { id: 'balanced' as PricingMode, name: 'Balanced', time: '~8s', cost: PRICING.balanced.display },
-                      { id: 'quality' as PricingMode, name: 'Quality', time: '~12s', cost: PRICING.quality.display },
-                    ].map((mode) => (
+                      {
+                        id: 'fashn' as AIProvider,
+                        name: 'Fashn AI',
+                        description: 'High-quality fashion try-on',
+                        time: '~8-12 seconds',
+                        badge: 'Recommended'
+                      },
+                      {
+                        id: 'google-nano' as AIProvider,
+                        name: 'Google Gemini',
+                        description: 'Fast AI-powered generation',
+                        time: '~5-8 seconds',
+                        badge: 'Fast'
+                      },
+                    ].map((provider) => (
                       <button
-                        key={mode.id}
-                        onClick={() => setSelectedMode(mode.id)}
+                        key={provider.id}
+                        onClick={() => setSelectedAIProvider(provider.id)}
                         className={`p-6 border-2 rounded-2xl transition-all ${
-                          selectedMode === mode.id
+                          selectedAIProvider === provider.id
                             ? 'border-primary-pink bg-pink-50'
                             : 'border-gray-300 hover:border-gray-400'
                         }`}
                       >
-                        <p className="font-semibold mb-2">{mode.name}</p>
-                        <p className="text-sm text-gray-600">{mode.time}</p>
-                        <p className="text-sm font-bold text-primary-pink mt-2">{mode.cost}</p>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-semibold">{provider.name}</p>
+                          <span className="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">
+                            {provider.badge}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">{provider.description}</p>
+                        <p className="text-xs text-gray-500 mt-2">{provider.time}</p>
                       </button>
                     ))}
                   </div>
@@ -307,14 +405,15 @@ export default function TryOnPage() {
                     <div>
                       <p className="text-sm text-gray-600 mb-1">Your selection</p>
                       <p className="font-bold text-gray-900">
-                        {selectedCategory || 'Select category'} • {selectedMode} mode
+                        {selectedCategory || 'Select category'} • {selectedAIProvider === 'fashn' ? 'Fashn AI' : 'Google Gemini'}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600 mb-1">Total cost</p>
-                      <p className="text-2xl font-bold text-primary-pink">
-                        {PRICING[selectedMode].display}
-                      </p>
+                      <p className="text-sm text-gray-600 mb-1">Credit cost</p>
+                      <div className="flex items-center gap-2">
+                        <Coins className="w-5 h-5 text-primary-pink" />
+                        <p className="text-2xl font-bold text-primary-pink">1 Credit</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -370,7 +469,7 @@ export default function TryOnPage() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-primary-pink mt-1">•</span>
-                <span className="text-gray-700">Quality mode gives the most realistic results but takes longer</span>
+                <span className="text-gray-700">Each try-on costs 1 credit - buy credits in advance for instant access</span>
               </li>
             </ul>
 

@@ -1,9 +1,15 @@
 import Stripe from 'stripe';
 import { loadStripe } from '@stripe/stripe-js';
 
+// Determine if we're in test or live mode
+// Auto-switches based on environment
+const isLiveMode =
+  process.env.NODE_ENV === 'production' &&
+  process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
 // Server-side Stripe instance
 export const stripe = new Stripe(
-  process.env.STRIPE_MODE === 'live'
+  isLiveMode
     ? process.env.STRIPE_SECRET_KEY_LIVE!
     : process.env.STRIPE_SECRET_KEY_TEST!,
   {
@@ -15,7 +21,7 @@ export const stripe = new Stripe(
 let stripePromise: Promise<any> | null = null;
 export const getStripe = () => {
   if (!stripePromise) {
-    const publishableKey = process.env.NEXT_PUBLIC_STRIPE_MODE === 'live'
+    const publishableKey = isLiveMode
       ? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_LIVE!
       : process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST!;
     stripePromise = loadStripe(publishableKey);
@@ -23,15 +29,58 @@ export const getStripe = () => {
   return stripePromise;
 };
 
-// Pricing configuration (in cents)
-// NOTE: Stripe charges 2.9% + $0.30 per transaction
-// For $0.10: You receive ~$0.07 after fees (30% fee overhead)
-// For $0.25: You receive ~$0.21 after fees (16% fee overhead)
-// For $0.50: You receive ~$0.47 after fees (6% fee overhead)
-export const PRICING = {
-  performance: { amount: 10, display: '$0.10', mode: 'performance' },
-  balanced: { amount: 25, display: '$0.25', mode: 'balanced' },
-  quality: { amount: 50, display: '$0.50', mode: 'quality' },
+// Credit package pricing
+export const CREDIT_PACKAGES = {
+  starter: {
+    id: 'starter',
+    name: 'Starter',
+    credits: 20,
+    price: 500, // $5.00 in cents
+    priceDisplay: '$5',
+    priceId: isLiveMode
+      ? process.env.STRIPE_STARTER_PRICE_LIVE!
+      : process.env.STRIPE_STARTER_PRICE_TEST!,
+    pricePerCredit: 0.25,
+    popular: false,
+  },
+  popular: {
+    id: 'popular',
+    name: 'Popular',
+    credits: 50,
+    price: 1000, // $10.00 in cents
+    priceDisplay: '$10',
+    priceId: isLiveMode
+      ? process.env.STRIPE_POPULAR_PRICE_LIVE!
+      : process.env.STRIPE_POPULAR_PRICE_TEST!,
+    pricePerCredit: 0.20,
+    popular: true,
+    badge: 'Best Value',
+  },
+  pro: {
+    id: 'pro',
+    name: 'Pro',
+    credits: 150,
+    price: 2500, // $25.00 in cents
+    priceDisplay: '$25',
+    priceId: isLiveMode
+      ? process.env.STRIPE_PRO_PRICE_LIVE!
+      : process.env.STRIPE_PRO_PRICE_TEST!,
+    pricePerCredit: 0.17,
+    popular: false,
+  },
 } as const;
 
-export type PricingMode = keyof typeof PRICING;
+export type CreditPackageId = keyof typeof CREDIT_PACKAGES;
+
+// Helper to get package by ID
+export function getCreditPackage(packageId: CreditPackageId) {
+  return CREDIT_PACKAGES[packageId];
+}
+
+// Helper to get package by price ID
+export function getCreditPackageByPriceId(priceId: string) {
+  return Object.values(CREDIT_PACKAGES).find(pkg => pkg.priceId === priceId);
+}
+
+// Export mode for debugging
+export const stripeMode = isLiveMode ? 'live' : 'test';

@@ -95,11 +95,19 @@ export async function GET(
         createdAt: generation.created_at,
       });
     } else if (generation.ai_provider === 'google-nano') {
-      // Google Nano status check (to be implemented)
-      return NextResponse.json(
-        { error: 'Google Nano Banana provider status check not yet implemented' },
-        { status: 501 }
-      );
+      // Google Gemini completes instantly, so status is already in DB
+      // Just return the stored result
+      return NextResponse.json({
+        id: generation.id,
+        status: generation.status,
+        output: generation.output_image_url ? [generation.output_image_url] : undefined,
+        error: generation.error_message ? {
+          name: 'GenerationError',
+          message: generation.error_message,
+        } : undefined,
+        createdAt: generation.created_at,
+        completedAt: generation.completed_at,
+      });
     }
 
     return NextResponse.json(

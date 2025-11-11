@@ -97,11 +97,17 @@ export async function POST(request: NextRequest) {
       predictionId = prediction.id;
       predictionError = prediction.error;
     } else if (aiProvider === 'google-nano') {
-      // Use Google Nano Banana API (to be implemented)
-      return NextResponse.json(
-        { error: 'Google Nano Banana provider is not yet implemented' },
-        { status: 501 } // Not Implemented
-      );
+      // Use Google Gemini API
+      const { getGeminiClient } = await import('@/lib/google-nano/client');
+      const geminiClient = getGeminiClient();
+      const prediction = await geminiClient.createPrediction({
+        modelImage: processedModelImage,
+        garmentImage: processedGarmentImage,
+        category: category as 'tops' | 'bottoms' | 'one-pieces' | undefined,
+      });
+
+      predictionId = prediction.id;
+      predictionError = prediction.error;
     } else {
       return NextResponse.json(
         { error: 'Invalid AI provider' },
