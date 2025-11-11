@@ -7,8 +7,14 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get('next') || '/try-on';
 
   if (code) {
-    const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const supabase = await createClient();
+      await supabase.auth.exchangeCodeForSession(code);
+    } catch (error) {
+      console.error('Auth callback error:', error);
+      // Redirect to login with error if Supabase is not configured
+      return NextResponse.redirect(new URL('/login?error=auth_failed', request.url));
+    }
   }
 
   // Redirect to the next page or try-on page

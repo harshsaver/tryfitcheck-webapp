@@ -2,46 +2,60 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(request: NextRequest) {
-  // Skip middleware if environment variables are not set
+  // Check if Supabase is configured
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  // If Supabase is not configured, allow all routes except protected ones
   if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase environment variables in middleware');
-    return NextResponse.next({
-      request,
-    });
+    console.warn('Supabase not configured - auth features disabled');
+
+    // Redirect protected routes to home
+    const protectedPaths = ['/try-on', '/dashboard'];
+    const isProtectedPath = protectedPaths.some((path) =>
+      request.nextUrl.pathname.startsWith(path)
+    );
+
+    if (isProtectedPath) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = '/';
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // Allow all other routes
+    return NextResponse.next();
   }
 
+  // Supabase is configured - proceed with auth checks
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(
-    supabaseUrl,
-    supabaseKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  // Refresh session if expired
   try {
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseKey,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            );
+            supabaseResponse = NextResponse.next({
+              request,
+            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
+
+    // Refresh session if expired
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -72,7 +86,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
   } catch (error) {
-    console.error('Middleware auth check failed:', error);
+    console.error('Middleware error:', error);
     // Continue without auth check if there's an error
   }
 
